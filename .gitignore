@@ -2,4 +2,4 @@
 mandarin.db
 
 # ignore pycache folders
-pycache/
+__pycache__/

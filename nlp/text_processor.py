@@ -14,6 +14,7 @@ def load_core_functional_words():
             
     return CORE_FUNCTIONAL_WORDS
 
+# csv for core functional words is loaded into a set for faster lookup
 CORE_FUNCTIONAL_WORDS = load_core_functional_words()
 
 # recursive function to filter out stop words and return the lemmas of the remaining words
@@ -44,18 +45,28 @@ def is_orphaned_filter(token):
     return False
 
 def classify_words(token):
-    lemma = token.lemma_
     
-    if lemma in CORE_FUNCTIONAL_WORDS:
-        return "tier0_functional"
-    if token.pos_ in ["NOUN", "VERB", "ADJ", "ADV", "PROPN", "NUM"]:
-        return "tier1_content"
+    tier1_content = (token.pos_ in ["NOUN", "VERB", "ADJ", "ADV", "PROPN", "NUM"]) or (token.dep_ in ["ROOT", "xcomp", "ccomp", "csubj"] and token.pos_ != "AUX")
+
+    if tier1_content:
+        return True
     
     return None
 
 def process_token(token):
-    # layer 1: filter out stop words
-    is_stop = is_stop_filter(token)
+    # exemptions for certain parts of speech and dependencies (may add more exemptions in the future)
+    exemptions = (token.pos_ in ["NUM"]) or (token.dep_ in ["ROOT", "xcomp", "ccomp", "csubj"] and token.pos_ != "AUX")
+    core_functional = token.lemma_.lower() in CORE_FUNCTIONAL_WORDS
+    
+    if exemptions:
+        is_stop = False
+        
+    else:
+        # layer 1: filter out stop words
+        is_stop = is_stop_filter(token)
+    
+    if core_functional:
+        return classify_words(token)
 
     if is_stop == True:
         is_orphaned = True
@@ -76,11 +87,11 @@ def process_text(text):
     results = []
 
     for sent in sents:
-        classification = {"tier0_functional": [], "tier1_content": []}
+        classification = {"content": []}
         for token in sent:
             classified_token = process_token(token)
             if classified_token:
-                classification[classified_token].append(token.lemma_)
+                classification["content"].append(token.lemma_)
         results.append({"text": sent.text, "classification": classification})
     
     return results
