@@ -50,20 +50,23 @@ def classify_words(token):
 
     if tier1_content:
         return "tier1_content"
-    if lemma in CORE_FUNCTIONAL_WORDS:
-        return "tier0_functional"
     
     return None
 
 def process_token(token):
     # exemptions for certain parts of speech and dependencies (may add more exemptions in the future)
-    exemptions = (token.pos_ in ["NUM"]) or (token.dep_ in ["ROOT", "xcomp", "ccomp", "csubj"] and token.pos_ != "AUX") or (token.lemma_ in CORE_FUNCTIONAL_WORDS)
+    exemptions = (token.pos_ in ["NUM"]) or (token.dep_ in ["ROOT", "xcomp", "ccomp", "csubj"] and token.pos_ != "AUX")
+    core_functional = token.lemma_.lower() in CORE_FUNCTIONAL_WORDS
     
     if exemptions:
         is_stop = False
+        return classify_words(token)
     else:
         # layer 1: filter out stop words
         is_stop = is_stop_filter(token)
+    
+    if core_functional:
+        return 
 
     if is_stop == True:
         is_orphaned = True
@@ -84,7 +87,7 @@ def process_text(text):
     results = []
 
     for sent in sents:
-        classification = {"tier0_functional": [], "tier1_content": []}
+        classification = {"tier1_content": []}
         for token in sent:
             classified_token = process_token(token)
             if classified_token:
