@@ -67,7 +67,7 @@ def save_to_database(results):
     for record in results:
         sentence_id = insert_sentence(record["text"])
         sentences_count += 1
-        for lemma in record["classification"]["tier1_content"]:
+        for lemma in record["classification"]["content"]:
             word_id = insert_word(lemma)
             word_sentence_link(word_id, sentence_id)
             word_links_count += 1
