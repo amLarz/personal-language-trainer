@@ -44,12 +44,11 @@ def is_orphaned_filter(token):
     return False
 
 def classify_words(token):
-    lemma = token.lemma_
     
     tier1_content = (token.pos_ in ["NOUN", "VERB", "ADJ", "ADV", "PROPN", "NUM"]) or (token.dep_ in ["ROOT", "xcomp", "ccomp", "csubj"] and token.pos_ != "AUX")
 
     if tier1_content:
-        return "tier1_content"
+        return True
     
     return None
 
@@ -91,7 +90,7 @@ def process_text(text):
         for token in sent:
             classified_token = process_token(token)
             if classified_token:
-                classification[classified_token].append(token.lemma_)
+                classification["content"].append(token.lemma_)
         results.append({"text": sent.text, "classification": classification})
     
     return results
