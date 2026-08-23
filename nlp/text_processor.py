@@ -14,6 +14,7 @@ def load_core_functional_words():
             
     return CORE_FUNCTIONAL_WORDS
 
+# csv for core functional words is loaded into a set for faster lookup
 CORE_FUNCTIONAL_WORDS = load_core_functional_words()
 
 # recursive function to filter out stop words and return the lemmas of the remaining words
@@ -59,13 +60,13 @@ def process_token(token):
     
     if exemptions:
         is_stop = False
-        return classify_words(token)
+        
     else:
         # layer 1: filter out stop words
         is_stop = is_stop_filter(token)
     
     if core_functional:
-        return 
+        return classify_words(token)
 
     if is_stop == True:
         is_orphaned = True
