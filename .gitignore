@@ -3,3 +3,6 @@ mandarin.db
 
 # ignore pycache folders
 __pycache__/
+
+# ignore virtual environments
+.venv/
