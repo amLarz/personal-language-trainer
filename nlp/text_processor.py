@@ -87,7 +87,7 @@ def process_text(text):
     results = []
 
     for sent in sents:
-        classification = {"tier1_content": []}
+        classification = {"content": []}
         for token in sent:
             classified_token = process_token(token)
             if classified_token:
