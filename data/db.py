@@ -53,6 +53,12 @@ def word_sentence_link(word_id, sentence_id):
 
     return 0
 
+def fetch_words():
+    fetch_words = cur.execute("SELECT * FROM words ORDER BY frequency DESC").fetchall()
+    
+    top_words = fetch_words[:50]
+    
+    return top_words
 
 def save_to_database(results):
 
@@ -66,6 +72,8 @@ def save_to_database(results):
             word_id = insert_word(lemma)
             word_sentence_link(word_id, sentence_id)
             word_links_count += 1
+            
+    fetch_words()
 
     con.commit()
 
