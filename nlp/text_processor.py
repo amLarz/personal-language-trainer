@@ -3,7 +3,7 @@ import csv
 import spacy
 
 # load the English NLP model
-nlp = spacy.load("en_core_web_lg")
+nlp = spacy.load("en_core_web_sm")
 
 
 def load_core_functional_words():
