@@ -1,5 +1,6 @@
 from data.db import fetch_words
 
+
 def extract_fetched():
     get_top_words = fetch_words()
     extracted_words = []

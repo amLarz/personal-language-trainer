@@ -57,7 +57,7 @@ def word_sentence_link(word_id, sentence_id):
 
 def fetch_words():
     fetch_words = cur.execute("SELECT * FROM words ORDER BY frequency DESC LIMIT 50").fetchall()
-    
+
     return fetch_words
 
 
