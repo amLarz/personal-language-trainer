@@ -75,8 +75,6 @@ def save_to_database(results):
             word_sentence_link(word_id, sentence_id)
             word_links_count += 1
 
-    fetch_words()
-
     con.commit()
 
     return {
