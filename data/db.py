@@ -1,6 +1,7 @@
 import sqlite3
+from data.paths import DATABASE_DIR
 
-con = sqlite3.connect("mandarin.db")
+con = sqlite3.connect(DATABASE_DIR / "mandarin.db")
 cur = con.cursor()
 cur.execute("PRAGMA foreign_keys = ON")
 
