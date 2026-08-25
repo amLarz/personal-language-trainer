@@ -4,4 +4,5 @@ import pathlib
 PROJECT_ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 # database directory
-DATABASE_DIR = PROJECT_ROOT / "data"
+DATABASE_DIR = PROJECT_ROOT / "user_data"
+
