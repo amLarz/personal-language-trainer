@@ -1,9 +1,7 @@
-from db import fetch_words
-
-get_top_words = fetch_words()
-
+from data.db import fetch_words
 
 def extract_fetched():
+    get_top_words = fetch_words()
     extracted_words = []
     for word in get_top_words:
         extracted_words.append(
