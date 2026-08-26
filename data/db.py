@@ -1,6 +1,7 @@
 import sqlite3
+from data.paths import DATABASE_DIR
 
-con = sqlite3.connect("mandarin.db")
+con = sqlite3.connect(DATABASE_DIR / "mandarin.db")
 cur = con.cursor()
 cur.execute("PRAGMA foreign_keys = ON")
 
@@ -52,6 +53,12 @@ def word_sentence_link(word_id, sentence_id):
     )
 
     return 0
+
+
+def fetch_words():
+    fetch_words = cur.execute("SELECT * FROM words ORDER BY frequency DESC LIMIT 50").fetchall()
+
+    return fetch_words
 
 
 def save_to_database(results):
