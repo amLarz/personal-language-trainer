@@ -5,22 +5,6 @@ import spacy
 # load the English NLP model
 nlp = spacy.load("en_core_web_sm")
 
-
-def load_core_functional_words():
-    CORE_FUNCTIONAL_WORDS = set()
-    with open("core-functional-words-v1.csv") as file:
-        reader = csv.reader(file)
-        for row in reader:
-            word = row[0].lower()
-            CORE_FUNCTIONAL_WORDS.add(word)
-
-    return CORE_FUNCTIONAL_WORDS
-
-
-# csv for core functional words is loaded into a set for faster lookup
-CORE_FUNCTIONAL_WORDS = load_core_functional_words()
-
-
 # recursive function to filter out stop words and return the lemmas of the remaining words
 def is_stop_filter(token):
     # if the token is a stop word, move on.
@@ -63,16 +47,8 @@ def classify_words(token):
 
 
 def process_token(token):
-    # exemptions for certain parts of speech and dependencies (may add more exemptions in the future)
-    exemptions = (token.pos_ in ["NUM"]) or (
-        token.dep_ in ["ROOT", "xcomp", "ccomp", "csubj"] and token.pos_ != "AUX"
-    )
-
-    if exemptions:
-        is_stop = False
-    else:
-        # layer 1: filter out stop words
-        is_stop = is_stop_filter(token)
+    # layer 1: filter out stop words
+    
 
     if is_stop == True:
         is_orphaned = True
