@@ -67,10 +67,6 @@ def process_token(token):
     exemptions = (token.pos_ in ["NUM"]) or (
         token.dep_ in ["ROOT", "xcomp", "ccomp", "csubj"] and token.pos_ != "AUX"
     )
-    core_functional = token.lemma_.lower() in CORE_FUNCTIONAL_WORDS
-
-    if core_functional:
-        return classify_words(token)
 
     if exemptions:
         is_stop = False
