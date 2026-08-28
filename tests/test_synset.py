@@ -1,6 +1,8 @@
 from nltk.corpus import wordnet as wn
 from nltk.wsd import lesk
 
-sent = ["He", "began", "to", "bank", "the", "plane"]
+sent = ["I", "joined", "a", "hackathon", "to", "continue", "my", "coding", "career"]
+print(lesk(sent, "coding", "n"))
 
-print(lesk(sent, "bank", "n").definition())
+print(wn.synsets("coding"))
+
