@@ -40,10 +40,7 @@ def classify_words(token):
         "text": token.text,
         "lemma": token.lemma_,
         "pos": token.pos_,
-        "tag": token.tag_,
         "dep": token.dep_,
-        "shape": token.shape_,
-        "is_alpha": token.is_alpha,
         "is_stop": token.is_stop
     }
 
