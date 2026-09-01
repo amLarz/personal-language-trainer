@@ -59,24 +59,3 @@ def fetch_words():
     fetch_words = cur.execute("SELECT * FROM words ORDER BY frequency DESC LIMIT 50").fetchall()
 
     return fetch_words
-
-
-def save_to_database(results):
-
-    sentences_count = 0
-    word_links_count = 0
-
-    for record in results:
-        sentence_id = insert_sentence(record["text"])
-        sentences_count += 1
-        for lemma in record["classification"]["content"]:
-            word_id = insert_word(lemma)
-            word_sentence_link(word_id, sentence_id)
-            word_links_count += 1
-
-    con.commit()
-
-    return {
-        "sentences_inserted": sentences_count,
-        "word_links_inserted": word_links_count,
-    }

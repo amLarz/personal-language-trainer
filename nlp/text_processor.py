@@ -10,7 +10,6 @@ def filter_text(text):
     # orphan dependencies that are not useful for content classification
     ORPHAN_DEPS = {
         "punct",
-        "det",
         "expl",
         "intj",
         "discourse"
@@ -21,7 +20,6 @@ def filter_text(text):
         "PUNCT",
         "X",
         "SPACE",
-        "DET"
     }
     
     # filter out expletives
@@ -62,6 +60,6 @@ def process_text(text):
         # loops over filtered tokens and classifies them
         for token in filtered_text:
             classified_token = classify_words(token)
-        results.append(classified_token)
+            results.append(classified_token)
 
     return results
