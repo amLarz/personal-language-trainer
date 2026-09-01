@@ -36,14 +36,16 @@ def filter_text(text):
 
 def classify_words(token):
 
-    tier1_content = (token.pos_ in ["NOUN", "VERB", "ADJ", "ADV", "PROPN", "NUM"]) or (
-        token.dep_ in ["ROOT", "xcomp", "ccomp", "csubj"] and token.pos_ != "AUX"
-    )
-
-    if tier1_content:
-        return True
-
-    return None
+    return {
+        "text": token.text,
+        "lemma": token.lemma_,
+        "pos": token.pos_,
+        "tag": token.tag_,
+        "dep": token.dep_,
+        "shape": token.shape_,
+        "is_alpha": token.is_alpha,
+        "is_stop": token.is_stop
+    }
 
 def process_text(text):
     
@@ -51,20 +53,18 @@ def process_text(text):
     doc = nlp(text)
     sents = list(doc.sents)
     results = []
+    sentences = []
     
     # goes through each sentence
     for sent in sents:
         # filter the text to remove unwanted tokens
         filtered_text = filter_text(doc)
-        
-        classification = {"content": []}
-        
+        sentences.append(sent.text)
+            
         # TODO: WORK ON THIS LOL
         # loops over filtered tokens and classifies them
         for token in filtered_text:
-            classified_token = process_token(token)
-            if classified_token:
-                classification["content"].append(token.lemma_)
-        results.append({"text": sent.text, "classification": classification})
+            classified_token = classify_words(token)
+        results.append(classified_token)
 
     return results
