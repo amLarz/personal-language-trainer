@@ -11,10 +11,14 @@
             "id": "8349401fb3893159",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "Concepts/Linguodidactics.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "New tab"
+              "title": "Linguodidactics"
             }
           }
         ]
@@ -183,5 +187,14 @@
     }
   },
   "active": "8349401fb3893159",
-  "lastOpenFiles": []
+  "lastOpenFiles": [
+    "Rough Notes/QUESTIONS.md",
+    "Concepts/Linguodidactics.md",
+    "Rough Notes/YAKE.md",
+    "Rough Notes/RAKE.md",
+    "Rough Notes/The Big Three of Importance.md",
+    "TF-IDF.md",
+    "Rough Notes",
+    "Concepts"
+  ]
 }

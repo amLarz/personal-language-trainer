@@ -5,34 +5,30 @@ import spacy
 # load the English NLP model
 nlp = spacy.load("en_core_web_sm")
 
-# recursive function to filter out stop words and return the lemmas of the remaining words
-def is_stop_filter(token):
-    # if the token is a stop word, move on.
-    if token.is_stop:
-        return True
-
-    return False
-
-
-def is_orphaned_filter(token):
-
-    # orphan dependencies that are not useful for our purposes
+def filter_token(text):
+    
     ORPHAN_DEPS = {
         "punct",
         "det",
         "expl",
-        "discourse",
-        "intj",
+        "int"
     }
-
-    dep = token.dep_
-
-    # if there are any orphan dependencies, move on.
-    if dep in ORPHAN_DEPS:
-        return True
-
-    return False
-
+    
+    FILTERED_POS = {
+        "PUNCT",
+        "X",
+        "SPACE"
+    }
+    
+    # filter out expletives
+    filtered_tokens = [token for token in text 
+                       if token.dep_ not in ORPHAN_DEPS
+                       and token.pos_ not in FILTERED_POS
+                       ]
+    
+    return filtered_tokens
+    
+    
 
 def classify_words(token):
 
@@ -45,20 +41,10 @@ def classify_words(token):
 
     return None
 
-
 def process_token(token):
-    # layer 1: filter out stop words
+    # filtering 
     
-
-    if is_stop == True:
-        is_orphaned = True
-    else:
-        # layer 2: filter out orphan dependencies
-        is_orphaned = is_orphaned_filter(token)
-
-    if not is_stop and not is_orphaned:
-        # layer 3: classify words
-        return classify_words(token)
+    
 
     return None
 
