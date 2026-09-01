@@ -5,19 +5,23 @@ import spacy
 # load the English NLP model
 nlp = spacy.load("en_core_web_sm")
 
-def filter_token(text):
+def filter_text(text):
     
+    # orphan dependencies that are not useful for content classification
     ORPHAN_DEPS = {
         "punct",
         "det",
         "expl",
-        "int"
+        "intj",
+        "discourse"
     }
     
+    # filtered parts of speech that are not useful for content classification
     FILTERED_POS = {
         "PUNCT",
         "X",
-        "SPACE"
+        "SPACE",
+        "DET"
     }
     
     # filter out expletives
@@ -50,14 +54,21 @@ def process_token(token):
 
 
 def process_text(text):
+    
     # process the text using spaCy
     doc = nlp(text)
     sents = list(doc.sents)
     results = []
-
+    
+    # goes through each sentence
     for sent in sents:
+        # filter the text to remove unwanted tokens
+        filtered_text = filter_text(doc)
+        
         classification = {"content": []}
-        for token in sent:
+        
+        # loops over filtered tokens and classifies them
+        for token in filtered_text:
             classified_token = process_token(token)
             if classified_token:
                 classification["content"].append(token.lemma_)
