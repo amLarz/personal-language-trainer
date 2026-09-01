@@ -5,4 +5,3 @@ sent = ["I", "joined", "a", "hackathon", "to", "continue", "my", "coding", "care
 print(lesk(sent, "coding", "n"))
 
 print(wn.synsets("coding"))
-
