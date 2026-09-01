@@ -45,14 +45,6 @@ def classify_words(token):
 
     return None
 
-def process_token(token):
-    # filtering 
-    
-    
-
-    return None
-
-
 def process_text(text):
     
     # process the text using spaCy
@@ -67,6 +59,7 @@ def process_text(text):
         
         classification = {"content": []}
         
+        # TODO: WORK ON THIS LOL
         # loops over filtered tokens and classifies them
         for token in filtered_text:
             classified_token = process_token(token)
