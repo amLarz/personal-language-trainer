@@ -43,18 +43,12 @@ def process_text(text):
     doc = nlp(text)
     sents = list(doc.sents)
     results = []
-    sentences = []
-    
-    # filter the text to remove unwanted tokens
-    filtered_text = filter_text(doc)
-
     # goes through each sentence
     for sent in sents:
-        sentences.append(sent.text)
+        # filter the text to remove unwanted tokens
+        filtered_text = filter_text(sent)
 
         # loops over filtered tokens and classifies them
-        for token in filtered_text:
-            classified_token = classify_words(token)
-            results.append(classified_token)
+        results.append({"sentence": sent.text, "tokens": [classify_words(token) for token in filtered_text]})
 
     return results

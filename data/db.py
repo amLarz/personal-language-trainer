@@ -33,7 +33,7 @@ con.commit()
 def insert_word(word):
     cur.execute("INSERT OR IGNORE INTO words (word) VALUES (?)", (word,))
 
-    cur.execute("UPDATE words SET frequency = frequency + 1 WHERE word = ?", (word,))
+    cur.execute(r"UPDATE words SET frequency = frequency + 1 WHERE word = ?", (word,))
 
     # return the word id
     return cur.execute("SELECT id FROM words WHERE word = ?", (word,)).fetchone()[0]
@@ -59,3 +59,19 @@ def fetch_words():
     fetch_words = cur.execute("SELECT * FROM words ORDER BY frequency DESC LIMIT 50").fetchall()
 
     return fetch_words
+
+def save_to_database(processed_text):
+    for item in processed_text:
+        
+        # insert the sentence and get its id
+        sentence_id = insert_sentence(item["sentence"]) 
+
+        tokens = item["tokens"]
+        
+        for token in tokens:
+            word_id = insert_word(token["text"])
+
+            # link the word and sentence
+            word_sentence_link(word_id, sentence_id)
+            
+    con.commit()
