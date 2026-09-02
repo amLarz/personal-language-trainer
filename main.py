@@ -20,6 +20,7 @@ def main(recording, input_type):
 
     # statistical scoring of the processed text
     stat_scoring(snapshot)
-    
+
+
 if __name__ == "__main__":
     main(recording_audio(), input_type="audio")  # Call the main function with the recorded audio

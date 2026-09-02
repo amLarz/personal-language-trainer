@@ -36,10 +36,11 @@ cur.execute("""CREATE VIEW IF NOT EXISTS essentials AS
 
 con.commit()
 
+
 # INSERT FUNCTIONS
 def insert_word(word):
     cur.execute("INSERT OR IGNORE INTO words (word) VALUES (?)", (word,))
-    
+
     cur.execute("UPDATE words SET count = count + 1 WHERE word = ?", (word,))
 
     # return the word id
@@ -61,21 +62,30 @@ def word_sentence_link(word_id, sentence_id):
 
     return 0
 
-#TODO: fix, make it faster
+
+# TODO: fix, make it faster
 def save_and_fetch(processed_text):
     for item in processed_text:
-        
         # insert the sentence and get its id
-        sentence_id = insert_sentence(item["sentence"]) 
+        sentence_id = insert_sentence(item["sentence"])
 
+        # token label
         tokens = item["tokens"]
-        
+        # recent inserts list
+        recent_inserts = []
+
         for token in tokens:
             word_id = insert_word(token["text"])
 
             # link the word and sentence
             word_sentence_link(word_id, sentence_id)
-            
+            # select the current token's word and id
+            current_token = cur.execute(
+                "SELECT id, word FROM words WHERE id = ?", (word_id,)
+            ).fetchnone()
+            # insert current token into recent inserts list
+            recent_inserts.append(current_token)
+
     con.commit()
-    
-    return cur.execute("SELECT * FROM words").fetchall()
+
+    return recent_inserts

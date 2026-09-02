@@ -49,6 +49,8 @@ def process_text(text):
         filtered_text = filter_text(sent)
 
         # loops over filtered tokens and classifies them
-        results.append({"sentence": sent.text, "tokens": [classify_words(token) for token in filtered_text]})
+        results.append(
+            {"sentence": sent.text, "tokens": [classify_words(token) for token in filtered_text]}
+        )
 
     return results
