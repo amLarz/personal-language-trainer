@@ -30,14 +30,13 @@ cur.execute("""CREATE TABLE IF NOT EXISTS words_sentences_links (
 )""")
 
 # TABLE VIEWS
-
 # table view for id, word and scores only
 cur.execute("""CREATE VIEW IF NOT EXISTS essentials AS
             SELECT id, word FROM words""")
 
 con.commit()
 
-
+# INSERT FUNCTIONS
 def insert_word(word):
     cur.execute("INSERT OR IGNORE INTO words (word) VALUES (?)", (word,))
     
@@ -62,14 +61,8 @@ def word_sentence_link(word_id, sentence_id):
 
     return 0
 
-
-def fetch_words():
-    fetch_words = cur.execute("SELECT id, frequency FROM words LIMIT 10").fetchall()
-
-    return fetch_words
-
 #TODO: fix, make it faster
-def save_to_database(processed_text):
+def save_and_fetch(processed_text):
     for item in processed_text:
         
         # insert the sentence and get its id
@@ -84,3 +77,5 @@ def save_to_database(processed_text):
             word_sentence_link(word_id, sentence_id)
             
     con.commit()
+    
+    return cur.execute("SELECT * FROM words").fetchall()

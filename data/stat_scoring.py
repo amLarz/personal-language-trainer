@@ -1,9 +1,14 @@
 from data.db import fetch_words
 
 
-def frequency():
+def freq_score():
     words = fetch_words()
     print(words)
     
     
-frequency()
+def stat_scoring(table):
+    for item in table:
+        
+        
+        
+    freq_score()
