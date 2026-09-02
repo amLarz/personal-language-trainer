@@ -44,14 +44,14 @@ def process_text(text):
     sents = list(doc.sents)
     results = []
     sentences = []
+    
+    # filter the text to remove unwanted tokens
+    filtered_text = filter_text(doc)
 
     # goes through each sentence
     for sent in sents:
-        # filter the text to remove unwanted tokens
-        filtered_text = filter_text(doc)
         sentences.append(sent.text)
 
-        # TODO: WORK ON THIS LOL
         # loops over filtered tokens and classifies them
         for token in filtered_text:
             classified_token = classify_words(token)
