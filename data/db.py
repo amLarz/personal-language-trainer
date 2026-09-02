@@ -9,7 +9,9 @@ cur.execute("PRAGMA foreign_keys = ON")
 cur.execute("""CREATE TABLE IF NOT EXISTS words (
     id INTEGER PRIMARY KEY,
     word TEXT NOT NULL UNIQUE,
-    frequency INTEGER NOT NULL DEFAULT 0
+    frequency_score INTEGER DEFAULT 0,
+    specificity_score INTEGER DEFAULT 0,
+    count INTEGER DEFAULT 0
 )""")
 
 # SENTENCES TABLE
@@ -27,13 +29,19 @@ cur.execute("""CREATE TABLE IF NOT EXISTS words_sentences_links (
     PRIMARY KEY (word_id, sentence_id)
 )""")
 
+# TABLE VIEWS
+
+# table view for id, word and scores only
+cur.execute("""CREATE VIEW IF NOT EXISTS essentials AS
+            SELECT id, word FROM words""")
+
 con.commit()
 
 
 def insert_word(word):
     cur.execute("INSERT OR IGNORE INTO words (word) VALUES (?)", (word,))
-
-    cur.execute(r"UPDATE words SET frequency = frequency + 1 WHERE word = ?", (word,))
+    
+    cur.execute("UPDATE words SET count = count + 1 WHERE word = ?", (word,))
 
     # return the word id
     return cur.execute("SELECT id FROM words WHERE word = ?", (word,)).fetchone()[0]
@@ -56,10 +64,11 @@ def word_sentence_link(word_id, sentence_id):
 
 
 def fetch_words():
-    fetch_words = cur.execute("SELECT * FROM words ORDER BY frequency DESC LIMIT 50").fetchall()
+    fetch_words = cur.execute("SELECT id, frequency FROM words LIMIT 10").fetchall()
 
     return fetch_words
 
+#TODO: fix, make it faster
 def save_to_database(processed_text):
     for item in processed_text:
         
