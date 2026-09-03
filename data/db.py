@@ -10,6 +10,7 @@ cur.execute("PRAGMA foreign_keys = ON")
 cur.execute("""CREATE TABLE IF NOT EXISTS words (
     id INTEGER PRIMARY KEY,
     word TEXT NOT NULL UNIQUE,
+    lemma TEXT NOT NULL UNIQUE,
     frequency_score INTEGER DEFAULT 0,
     specificity_score INTEGER DEFAULT 0,
     count INTEGER DEFAULT 0
