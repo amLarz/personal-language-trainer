@@ -42,10 +42,11 @@ con.commit()
 # INSERT FUNCTIONS
 def insert_word(word, lemma):
     cur.execute("INSERT OR IGNORE INTO words (word, lemma) VALUES (?, ?)", (word, lemma))
+    
     cur.execute("UPDATE words SET count = count + 1 WHERE word = ?", (word,))
 
     # return the word id
-    return cur.execute("SELECT id FROM words WHERE word = ?", (word,)).fetchone()
+    return cur.execute("SELECT id FROM words WHERE word = ?", (word,)).fetchone()[0]
 
 
 def insert_sentence(sentence):
