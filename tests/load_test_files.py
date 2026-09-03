@@ -4,7 +4,7 @@ import os
 FOLDER_PATH = os.path.dirname(os.path.abspath(__file__))
 
 
-def load_files(audio_or_text):
+def load_files(audio_or_text): # CHANGED THIS FOR EASE OF TESTING
     files = []  # directory to store the audio files
 
     if audio_or_text == "text":

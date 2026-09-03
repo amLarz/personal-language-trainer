@@ -10,7 +10,7 @@ cur.execute("PRAGMA foreign_keys = ON")
 cur.execute("""CREATE TABLE IF NOT EXISTS words (
     id INTEGER PRIMARY KEY,
     word TEXT NOT NULL UNIQUE,
-    lemma TEXT NOT NULL UNIQUE,
+    lemma TEXT NOT NULL,
     frequency_score INTEGER DEFAULT 0,
     specificity_score INTEGER DEFAULT 0,
     count INTEGER DEFAULT 0
@@ -45,7 +45,7 @@ def insert_word(word, lemma):
     cur.execute("UPDATE words SET count = count + 1 WHERE word = ?", (word,))
 
     # return the word id
-    return cur.execute("SELECT id FROM words WHERE word = ?", (word,)).fetchone()[0]
+    return cur.execute("SELECT id FROM words WHERE word = ?", (word,)).fetchone()
 
 
 def insert_sentence(sentence):
