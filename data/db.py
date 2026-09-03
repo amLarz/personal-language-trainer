@@ -39,9 +39,8 @@ con.commit()
 
 # INSERT FUNCTIONS
 def insert_word(word):
-    cur.execute("INSERT OR IGNORE INTO words (word) VALUES (?)", (word,))
-
-    cur.execute("UPDATE words SET count = count + 1 WHERE word = ?", (word,))
+    cur.execute("INSERT OR IGNORE INTO words (word) VALUES (?) RETURNING *", (word,))
+    cur.execute("UPDATE words SET count = count + 1 WHERE word = ? RETURNING *", (word,))
 
     # return the word id
     return cur.execute("SELECT id FROM words WHERE word = ?", (word,)).fetchone()[0]
@@ -75,16 +74,16 @@ def save_and_fetch(processed_text):
         recent_inserts = []
 
         for token in tokens:
-            word_id = insert_word(token["text"])
+            word_id = insert_word(token["lemma"])
 
             # link the word and sentence
             word_sentence_link(word_id, sentence_id)
             # select the current token's word and id
             current_token = cur.execute(
                 "SELECT id, word FROM words WHERE id = ?", (word_id,)
-            ).fetchnone()
+            )
             # insert current token into recent inserts list
-            recent_inserts.append(current_token)
+            recent_inserts.append(current_token.fetchone())
 
     con.commit()
 

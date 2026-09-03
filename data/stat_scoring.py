@@ -1,4 +1,3 @@
-from data.db import fetch_words
 import math
 
 

@@ -29,7 +29,7 @@ def filter_text(text):
 def classify_words(token):
 
     return {
-        "text": token.text,
+        "text": token.text.lower(),
         "lemma": token.lemma_,
         "pos": token.pos_,
         "dep": token.dep_,
