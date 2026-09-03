@@ -41,8 +41,8 @@ con.commit()
 
 # INSERT FUNCTIONS
 def insert_word(word):
-    cur.execute("INSERT OR IGNORE INTO words (word) VALUES (?) RETURNING *", (word,))
-    cur.execute("UPDATE words SET count = count + 1 WHERE word = ? RETURNING *", (word,))
+    cur.execute("INSERT OR IGNORE INTO words (word) VALUES (?)", (word,))
+    cur.execute("UPDATE words SET count = count + 1 WHERE word = ?", (word,))
 
     # return the word id
     return cur.execute("SELECT id FROM words WHERE word = ?", (word,)).fetchone()[0]
