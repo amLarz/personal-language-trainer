@@ -2,7 +2,7 @@ import math
 
 
 # frequency function for stat scoring, parameters of unpacked words table
-def freq_score(id, word, frequency_score, count):
+def freq_score(id, word):
     token_frequency_score = math.log10(count + 1)  # calculate frequency score
     print(token_frequency_score)
 

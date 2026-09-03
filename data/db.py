@@ -1,5 +1,6 @@
 import sqlite3
 from data.paths import DATABASE_DIR
+from collections import Counter
 
 con = sqlite3.connect(DATABASE_DIR / "mandarin.db")
 cur = con.cursor()
@@ -84,6 +85,8 @@ def save_and_fetch(processed_text):
             )
             # insert current token into recent inserts list
             recent_inserts.append(current_token.fetchone())
+            
+        recent_inserts = Counter(recent_inserts)
 
     con.commit()
 
