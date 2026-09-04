@@ -21,6 +21,7 @@ def freq_score(word_id, count):
 def stat_scoring(table):
     for row in table:
         
+        # TODO: lowk fix this because it looks messy ash
         word_id, word, lemma, frequency_score, specificity_score, count = row  # Unpack the row
         
         # calculate frequency score
