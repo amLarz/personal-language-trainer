@@ -19,7 +19,7 @@ def main(recording, input_type):
     print("Snapshot:", snapshot)
 
     # statistical scoring of the processed text
-    #stat_scoring(snapshot)
+    stat_scoring(snapshot)
 
 
 if __name__ == "__main__":
