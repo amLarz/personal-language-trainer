@@ -1,6 +1,7 @@
 from audio.record import recording_audio
 from audio.transcribe import transcribe_audio
-from data.db import save_to_database
+from data.db import save_and_fetch
+from data.stat_scoring import stat_scoring
 from nlp.text_processor import process_text
 
 
@@ -14,7 +15,11 @@ def main(recording, input_type):
     print("Processed Text:", processed_text)
 
     # update the word frequency in the database
-    print(save_to_database(processed_text))
+    snapshot = save_and_fetch(processed_text)
+    print("Snapshot:", snapshot)
+
+    # statistical scoring of the processed text
+    stat_scoring(snapshot)
 
 
 if __name__ == "__main__":

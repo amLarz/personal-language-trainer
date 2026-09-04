@@ -6,103 +6,51 @@ import spacy
 nlp = spacy.load("en_core_web_sm")
 
 
-def load_core_functional_words():
-    CORE_FUNCTIONAL_WORDS = set()
-    with open("core-functional-words-v1.csv") as file:
-        reader = csv.reader(file)
-        for row in reader:
-            word = row[0].lower()
-            CORE_FUNCTIONAL_WORDS.add(word)
+def filter_text(text):
 
-    return CORE_FUNCTIONAL_WORDS
+    # orphan dependencies that are not useful for content classification
+    ORPHAN_DEPS = {"punct", "expl", "intj", "discourse"}
 
-
-# csv for core functional words is loaded into a set for faster lookup
-CORE_FUNCTIONAL_WORDS = load_core_functional_words()
-
-
-# recursive function to filter out stop words and return the lemmas of the remaining words
-def is_stop_filter(token):
-    # if the token is a stop word, move on.
-    if token.is_stop:
-        return True
-
-    return False
-
-
-def is_orphaned_filter(token):
-
-    # orphan dependencies that are not useful for our purposes
-    ORPHAN_DEPS = {
-        "punct",
-        "det",
-        "expl",
-        "discourse",
-        "intj",
+    # filtered parts of speech that are not useful for content classification
+    FILTERED_POS = {
+        "PUNCT",
+        "X",
+        "SPACE",
     }
 
-    dep = token.dep_
+    # filter out expletives
+    filtered_tokens = [
+        token for token in text if token.dep_ not in ORPHAN_DEPS and token.pos_ not in FILTERED_POS
+    ]
 
-    # if there are any orphan dependencies, move on.
-    if dep in ORPHAN_DEPS:
-        return True
-
-    return False
+    return filtered_tokens
 
 
 def classify_words(token):
 
-    tier1_content = (token.pos_ in ["NOUN", "VERB", "ADJ", "ADV", "PROPN", "NUM"]) or (
-        token.dep_ in ["ROOT", "xcomp", "ccomp", "csubj"] and token.pos_ != "AUX"
-    )
-
-    if tier1_content:
-        return True
-
-    return None
-
-
-def process_token(token):
-    # exemptions for certain parts of speech and dependencies (may add more exemptions in the future)
-    exemptions = (token.pos_ in ["NUM"]) or (
-        token.dep_ in ["ROOT", "xcomp", "ccomp", "csubj"] and token.pos_ != "AUX"
-    )
-    core_functional = token.lemma_.lower() in CORE_FUNCTIONAL_WORDS
-
-    if core_functional:
-        return classify_words(token)
-
-    if exemptions:
-        is_stop = False
-    else:
-        # layer 1: filter out stop words
-        is_stop = is_stop_filter(token)
-
-    if is_stop == True:
-        is_orphaned = True
-    else:
-        # layer 2: filter out orphan dependencies
-        is_orphaned = is_orphaned_filter(token)
-
-    if not is_stop and not is_orphaned:
-        # layer 3: classify words
-        return classify_words(token)
-
-    return None
+    return {
+        "text": token.text.lower(),
+        "lemma": token.lemma_,
+        "pos": token.pos_,
+        "dep": token.dep_,
+        "is_stop": token.is_stop,
+    }
 
 
 def process_text(text):
+
     # process the text using spaCy
     doc = nlp(text)
     sents = list(doc.sents)
     results = []
-
+    # goes through each sentence
     for sent in sents:
-        classification = {"content": []}
-        for token in sent:
-            classified_token = process_token(token)
-            if classified_token:
-                classification["content"].append(token.lemma_)
-        results.append({"text": sent.text, "classification": classification})
+        # filter the text to remove unwanted tokens
+        filtered_text = filter_text(sent)
+
+        # loops over filtered tokens and classifies them
+        results.append(
+            {"sentence": sent.text, "tokens": [classify_words(token) for token in filtered_text]}
+        )
 
     return results

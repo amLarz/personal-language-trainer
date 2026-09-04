@@ -1,5 +1,6 @@
 import sqlite3
 from data.paths import DATABASE_DIR
+from collections import Counter
 
 con = sqlite3.connect(DATABASE_DIR / "mandarin.db")
 cur = con.cursor()
@@ -9,7 +10,10 @@ cur.execute("PRAGMA foreign_keys = ON")
 cur.execute("""CREATE TABLE IF NOT EXISTS words (
     id INTEGER PRIMARY KEY,
     word TEXT NOT NULL UNIQUE,
-    frequency INTEGER NOT NULL DEFAULT 0
+    lemma TEXT NOT NULL,
+    frequency_score INTEGER DEFAULT 0,
+    specificity_score INTEGER DEFAULT 0,
+    count INTEGER DEFAULT 0
 )""")
 
 # SENTENCES TABLE
@@ -27,13 +31,19 @@ cur.execute("""CREATE TABLE IF NOT EXISTS words_sentences_links (
     PRIMARY KEY (word_id, sentence_id)
 )""")
 
+# TABLE VIEWS
+# table view for id, word and scores only
+cur.execute("""CREATE VIEW IF NOT EXISTS essentials AS
+            SELECT id, word FROM words""")
+
 con.commit()
 
 
-def insert_word(word):
-    cur.execute("INSERT OR IGNORE INTO words (word) VALUES (?)", (word,))
+# INSERT FUNCTIONS
+def insert_word(word, lemma):
+    cur.execute("INSERT OR IGNORE INTO words (word, lemma) VALUES (?, ?)", (word, lemma))
 
-    cur.execute("UPDATE words SET frequency = frequency + 1 WHERE word = ?", (word,))
+    cur.execute("UPDATE words SET count = count + 1 WHERE word = ?", (word,))
 
     # return the word id
     return cur.execute("SELECT id FROM words WHERE word = ?", (word,)).fetchone()[0]
@@ -55,28 +65,42 @@ def word_sentence_link(word_id, sentence_id):
     return 0
 
 
-def fetch_words():
-    fetch_words = cur.execute("SELECT * FROM words ORDER BY frequency DESC LIMIT 50").fetchall()
+# Scoring functions
+def fetch_frequency_score(word_id):
+    cur.execute("SELECT frequency_score FROM words WHERE id = ?", (word_id,))
 
-    return fetch_words
+    return cur.fetchone()[0]
 
 
-def save_to_database(results):
+def push_statistical_score(word_id, frequency_score):  # TODO: add specificity too
+    cur.execute("UPDATE words SET frequency_score = ? WHERE id = ?", (frequency_score, word_id))
 
-    sentences_count = 0
-    word_links_count = 0
+    return 0
 
-    for record in results:
-        sentence_id = insert_sentence(record["text"])
-        sentences_count += 1
-        for lemma in record["classification"]["content"]:
-            word_id = insert_word(lemma)
+
+# TODO: fix, make it faster
+def save_and_fetch(processed_text):
+    for item in processed_text:
+        # insert the sentence and get its id
+        sentence_id = insert_sentence(item["sentence"])
+
+        # token label
+        tokens = item["tokens"]
+        # recent inserts list
+        recent_inserts = []
+
+        for token in tokens:
+            word_id = insert_word(token["text"], token["lemma"])
+
+            # link the word and sentence
             word_sentence_link(word_id, sentence_id)
-            word_links_count += 1
+            # select the current token's word and id
+            current_token = cur.execute("SELECT * FROM words WHERE id = ?", (word_id,))
+            # insert current token into recent inserts list
+            recent_inserts.append(current_token.fetchone())
+
+        recent_inserts = Counter(recent_inserts)
 
     con.commit()
 
-    return {
-        "sentences_inserted": sentences_count,
-        "word_links_inserted": word_links_count,
-    }
+    return recent_inserts
