@@ -1,15 +1,30 @@
 import math
-
+from data.db import fetch_frequency_score, push_statistical_score
 
 # frequency function for stat scoring, parameters of unpacked words table
-def freq_score(id, word, lemma, count):
-    token_frequency_score = math.log10(count + 1)  # Use log to scale the frequency score
+def freq_score(word_id, count):
+    current_db_score = fetch_frequency_score(word_id)
     
-    return token_frequency_score
+    token_frequency_score = math.log10(count + 1)  # Use log to scale the frequency score
+    print("OLD:", token_frequency_score)
+    
+    if current_db_score is None:
+        return token_frequency_score
+    
+    new_frequency_score = (0.5 * token_frequency_score) + ((1- 0.8) * current_db_score)
+    print("NEW", new_frequency_score)
+    
+    return new_frequency_score
 
 
 # main function for stat scoring, parameters of packed words table
 def stat_scoring(table):
     for row in table:
+        
+        word_id, word, lemma, frequency_score, specificity_score, count = row  # Unpack the row
+        
         # calculate frequency score
-        frequency_score = freq_score(*row, table.get(row))
+        frequency_score = freq_score(word_id, count)
+        push_statistical_score(word_id, frequency_score)
+
+    return 0

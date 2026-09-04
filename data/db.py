@@ -64,6 +64,18 @@ def word_sentence_link(word_id, sentence_id):
 
     return 0
 
+# Scoring functions
+def fetch_frequency_score(word_id):
+    cur.execute("SELECT frequency_score FROM words WHERE id = ?", (word_id,))
+    
+    return cur.fetchone()[0]
+
+def push_statistical_score(word_id, frequency_score): # TODO: add specificity too
+    cur.execute(
+        "UPDATE words SET frequency_score = ? WHERE id = ?", (frequency_score, word_id)
+    )
+    
+    return 0
 
 # TODO: fix, make it faster
 def save_and_fetch(processed_text):
@@ -83,13 +95,13 @@ def save_and_fetch(processed_text):
             word_sentence_link(word_id, sentence_id)
             # select the current token's word and id
             current_token = cur.execute(
-                "SELECT id, word, lemma FROM words WHERE id = ?", (word_id,)
+                "SELECT * FROM words WHERE id = ?", (word_id,)
             )
             # insert current token into recent inserts list
             recent_inserts.append(current_token.fetchone())
             
         recent_inserts = Counter(recent_inserts)
-
+    
     con.commit()
 
     return recent_inserts
