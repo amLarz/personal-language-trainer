@@ -42,7 +42,7 @@ con.commit()
 # INSERT FUNCTIONS
 def insert_word(word, lemma):
     cur.execute("INSERT OR IGNORE INTO words (word, lemma) VALUES (?, ?)", (word, lemma))
-    
+
     cur.execute("UPDATE words SET count = count + 1 WHERE word = ?", (word,))
 
     # return the word id
@@ -64,18 +64,19 @@ def word_sentence_link(word_id, sentence_id):
 
     return 0
 
+
 # Scoring functions
 def fetch_frequency_score(word_id):
     cur.execute("SELECT frequency_score FROM words WHERE id = ?", (word_id,))
-    
+
     return cur.fetchone()[0]
 
-def push_statistical_score(word_id, frequency_score): # TODO: add specificity too
-    cur.execute(
-        "UPDATE words SET frequency_score = ? WHERE id = ?", (frequency_score, word_id)
-    )
-    
+
+def push_statistical_score(word_id, frequency_score):  # TODO: add specificity too
+    cur.execute("UPDATE words SET frequency_score = ? WHERE id = ?", (frequency_score, word_id))
+
     return 0
+
 
 # TODO: fix, make it faster
 def save_and_fetch(processed_text):
@@ -94,14 +95,12 @@ def save_and_fetch(processed_text):
             # link the word and sentence
             word_sentence_link(word_id, sentence_id)
             # select the current token's word and id
-            current_token = cur.execute(
-                "SELECT * FROM words WHERE id = ?", (word_id,)
-            )
+            current_token = cur.execute("SELECT * FROM words WHERE id = ?", (word_id,))
             # insert current token into recent inserts list
             recent_inserts.append(current_token.fetchone())
-            
+
         recent_inserts = Counter(recent_inserts)
-    
+
     con.commit()
 
     return recent_inserts
