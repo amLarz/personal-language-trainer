@@ -17,6 +17,8 @@ def freq_score(word_id, count):
 
     return new_frequency_score
 
+def spec_score(word_id, count):
+    pass
 
 # main function for stat scoring, parameters of packed words table
 def stat_scoring(table):
@@ -26,6 +28,10 @@ def stat_scoring(table):
 
         # calculate frequency score
         frequency_score = freq_score(word_id, count)
+
+        # calculate specificity score
+        specificity_score = spec_score(word_id, count)
+        
         push_statistical_score(word_id, frequency_score)
 
     return 0
