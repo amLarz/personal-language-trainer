@@ -1,3 +1,5 @@
 sounddevice
 whisper
 spacy
+wordfreq
+
