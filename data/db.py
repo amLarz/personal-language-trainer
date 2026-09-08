@@ -90,6 +90,7 @@ def push_statistical_score(word_id, frequency_score):  # TODO: add specificity t
 
 
 # TODO: fix, make it faster
+# TODO: return a dict instead of a tuple or memory returns
 def save_and_fetch(processed_text):
     for item in processed_text:
         # insert the sentence and get its id
@@ -106,9 +107,9 @@ def save_and_fetch(processed_text):
             # link the word and sentence
             word_sentence_link(word_id, sentence_id)
             # select the current token's word and id
-            current_token = cur.execute("SELECT * FROM words WHERE id = ?", (word_id,))
+            current_token = con.execute("SELECT * FROM words WHERE id = ?", (word_id,))
             # insert current token into recent inserts list
-            recent_inserts.append(dict(current_token.fetchone()))
+            recent_inserts.append(current_token.fetchone())
 
         recent_inserts = Counter(recent_inserts)
 
