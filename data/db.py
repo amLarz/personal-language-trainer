@@ -3,6 +3,7 @@ from data.paths import DATABASE_DIR
 from collections import Counter
 
 con = sqlite3.connect(DATABASE_DIR / "mandarin.db")
+con.row_factory = sqlite3.Row
 cur = con.cursor()
 cur.execute("PRAGMA foreign_keys = ON")
 
@@ -107,7 +108,7 @@ def save_and_fetch(processed_text):
             # select the current token's word and id
             current_token = cur.execute("SELECT * FROM words WHERE id = ?", (word_id,))
             # insert current token into recent inserts list
-            recent_inserts.append(current_token.fetchone())
+            recent_inserts.append(dict(current_token.fetchone()))
 
         recent_inserts = Counter(recent_inserts)
 

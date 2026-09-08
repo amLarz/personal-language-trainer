@@ -20,6 +20,8 @@ def freq_score(word_id, count):
 
 def spec_score(word_id, count):
     current_db_score = fetch_specificity_score(word_id)
+    reference_zipf = wordfreq.zipf_frequency(fetch_word(word_id), 'en')
+    word_zipf = log10()
     
     pass
 
