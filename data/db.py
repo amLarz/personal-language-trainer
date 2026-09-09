@@ -90,7 +90,6 @@ def push_statistical_score(word_id, frequency_score):  # TODO: add specificity t
 
 
 # TODO: fix, make it faster
-# TODO: return a dict instead of a tuple or memory returns
 def save_and_fetch(processed_text):
     for item in processed_text:
         # insert the sentence and get its id
