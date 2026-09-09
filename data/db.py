@@ -110,7 +110,7 @@ def save_and_fetch(processed_text):
             # insert current token into recent inserts list
             recent_inserts.append(dict(current_token))
 
-        #recent_inserts = Counter(recent_inserts)
+    # TODO: add a counter for all recent inserts
 
     con.commit()
 
