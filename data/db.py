@@ -111,7 +111,20 @@ def save_and_fetch(processed_text):
             recent_inserts.append(dict(current_token))
 
     # TODO: add a counter for all recent inserts
-
+    counted_inserts = {}
+    
+    for item in recent_inserts:
+        word_id = item["id"]
+        
+        if word_id not in counted_inserts:
+            counted_inserts[word_id] = item.copy()
+            counted_inserts[word_id]["_count"] = 1
+            
+        else:
+            counted_inserts[word_id]["_count"] += 1
+    
+    final_inserts = list(counted_inserts.values())
+    
     con.commit()
 
-    return recent_inserts
+    return final_inserts
