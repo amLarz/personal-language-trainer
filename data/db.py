@@ -109,7 +109,7 @@ def save_and_fetch(processed_text):
             # insert current token into recent inserts list
             recent_inserts.append(dict(current_token))
 
-    # TODO: add a counter for all recent inserts
+    # TODO: find a way to connect token count to word table return
     counted_inserts = {}
 
     for item in recent_inserts:
