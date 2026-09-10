@@ -20,7 +20,8 @@ cur.execute("""CREATE TABLE IF NOT EXISTS words (
 # SENTENCES TABLE
 cur.execute("""CREATE TABLE IF NOT EXISTS sentences (
     id INTEGER PRIMARY KEY,
-    sentence TEXT NOT NULL
+    sentence TEXT NOT NULL,
+    token_count INTEGER DEFAULT 0
 )""")
 
 # WORDS_SENTENCES_LINKS TABLE
@@ -88,7 +89,6 @@ def push_statistical_score(word_id, frequency_score):  # TODO: add specificity t
 
     return 0
 
-
 # TODO: fix, make it faster
 def save_and_fetch(processed_text):
     for item in processed_text:
@@ -112,7 +112,7 @@ def save_and_fetch(processed_text):
 
     # TODO: add a counter for all recent inserts
     counted_inserts = {}
-    
+
     for item in recent_inserts:
         word_id = item["id"]
         

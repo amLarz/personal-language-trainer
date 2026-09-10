@@ -50,7 +50,7 @@ def process_text(text):
 
         # loops over filtered tokens and classifies them
         results.append(
-            {"sentence": sent.text, "tokens": [classify_words(token) for token in filtered_text]}
+            {"sentence": sent.text, "token_count": len(sent), "tokens": [classify_words(token) for token in filtered_text]}
         )
 
     return results
