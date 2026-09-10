@@ -18,13 +18,17 @@ def freq_score(word_id, count):
 
     return frequency_score
 
-def spec_score(word_id, count, token_count):
+def spec_score(word_id, count, token_count): # TODO: fix the math for averaging or smoothing
     
     current_db_score = fetch_specificity_score(word_id)
     reference_zipf = wordfreq.zipf_frequency(fetch_word(word_id), 'en')
     word_zipf = math.log10((count / token_count) * 1e9)
     
     specificity_score = word_zipf - reference_zipf
+    
+    if current_db_score is None:
+        return specificity_score
+    
     specificity_score = specificity_score - current_db_score
     
     print("SPECIFICITY SCORE:", specificity_score)  # DELETE THIS
