@@ -35,7 +35,7 @@ def spec_score(word_id, count, token_count):
 def stat_scoring(table):
     token_count = table[0]["token_count"] # TODO: fix this because this does not look good
     
-    for row in table:
+    for row in table[1:]: # TODO: REMOVE THE SLICE OMD FIX THIS
         
         word_id = row["id"]
         count = row["_count"]
