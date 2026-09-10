@@ -18,15 +18,21 @@ def freq_score(word_id, count):
 
     return new_frequency_score
 
-def spec_score(word_id, count):
+def spec_score(word_id, count, token_count):
+    
     current_db_score = fetch_specificity_score(word_id)
     reference_zipf = wordfreq.zipf_frequency(fetch_word(word_id), 'en')
-    word_zipf = math.log10(count)
+    word_zipf = math.log10((count / token_count) * 1e9)
     
-    pass
+    specificity_score = word_zipf - reference_zipf
+    specificity_score = specificity_score - current_db_score
+    
+    return specificity_score
 
 # main function for stat scoring, parameters of packed words table
 def stat_scoring(table):
+    token_count = table[0]["token_count"] # TODO: fix this because this does not look good
+    
     for row in table:
         
         word_id = row["id"]
@@ -36,8 +42,7 @@ def stat_scoring(table):
         frequency_score = freq_score(word_id, count)
 
         # calculate specificity score
-        specificity_score = spec_score(word_id, count)
+        specificity_score = spec_score(word_id, count, token_count)
         
         push_statistical_score(word_id, frequency_score)
-
     return 0
