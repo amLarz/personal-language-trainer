@@ -50,9 +50,8 @@ def insert_word(word, lemma):
     # return the word id
     return cur.execute("SELECT id FROM words WHERE word = ?", (word,)).fetchone()[0]
 
-
-def insert_sentence(sentence):
-    cur.execute("INSERT INTO sentences (sentence) VALUES (?)", (sentence,))
+def insert_sentence(sentence, token_count):
+    cur.execute("INSERT INTO sentences (sentence, token_count) VALUES (?, ?)", (sentence, token_count))
 
     # return the last sentence id
     return cur.lastrowid
@@ -93,7 +92,7 @@ def push_statistical_score(word_id, frequency_score):  # TODO: add specificity t
 def save_and_fetch(processed_text):
     for item in processed_text:
         # insert the sentence and get its id
-        sentence_id = insert_sentence(item["sentence"])
+        sentence_id = insert_sentence(item["sentence"], item["token_count"])
 
         # token label
         tokens = item["tokens"]
