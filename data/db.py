@@ -90,12 +90,12 @@ def push_statistical_score(word_id, frequency_score):  # TODO: add specificity t
 
 # TODO: fix, make it faster
 def save_and_fetch(processed_text):
-    for item in processed_text:
+    for record in processed_text:
         # insert the sentence and get its id
-        sentence_id = insert_sentence(item["sentence"], item["token_count"])
+        sentence_id = insert_sentence(record["sentence"], record["token_count"])
 
         # token label
-        tokens = item["tokens"]
+        tokens = record["tokens"]
         # recent inserts list
         recent_inserts = []
 
@@ -123,7 +123,9 @@ def save_and_fetch(processed_text):
             counted_inserts[word_id]["_count"] += 1
     
     final_inserts = list(counted_inserts.values())
+    final_inserts.insert(0, {"token_count": record["token_count"]})  # TODO: fix this because this does not look good
     
+    print(final_inserts)  # DELETE THIS
     con.commit()
 
-    return final_inserts
+    return final_inserts # returns a list of dictionaries 
