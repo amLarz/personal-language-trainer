@@ -13,10 +13,10 @@ def freq_score(word_id, count):
     if current_db_score is None:
         return token_frequency_score
 
-    new_frequency_score = (0.5 * token_frequency_score) + (0.2 * current_db_score)
-    print("NEW", new_frequency_score)  # DELETE THIS
+    frequency_score = (0.5 * token_frequency_score) + (0.2 * current_db_score)
+    print("NEW", frequency_score)  # DELETE THIS
 
-    return new_frequency_score
+    return frequency_score
 
 def spec_score(word_id, count, token_count):
     
@@ -26,6 +26,8 @@ def spec_score(word_id, count, token_count):
     
     specificity_score = word_zipf - reference_zipf
     specificity_score = specificity_score - current_db_score
+    
+    print("SPECIFICITY SCORE:", specificity_score)  # DELETE THIS
     
     return specificity_score
 
@@ -44,5 +46,5 @@ def stat_scoring(table):
         # calculate specificity score
         specificity_score = spec_score(word_id, count, token_count)
         
-        push_statistical_score(word_id, frequency_score)
+        push_statistical_score(word_id, frequency_score, specificity_score)
     return 0

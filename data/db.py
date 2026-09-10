@@ -83,8 +83,9 @@ def fetch_word(id):
 
     return cur.fetchone()[0]
 
-def push_statistical_score(word_id, frequency_score):  # TODO: add specificity too
-    cur.execute("UPDATE words SET frequency_score = ? WHERE id = ?", (frequency_score, word_id))
+
+def push_statistical_score(word_id, frequency_score, specificity_score):  # TODO: add specificity too
+    cur.execute("UPDATE words SET frequency_score = ?, specificity_score = ? WHERE id = ?", (frequency_score, specificity_score, word_id))
 
     return 0
 
