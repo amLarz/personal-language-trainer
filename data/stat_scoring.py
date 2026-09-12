@@ -29,7 +29,7 @@ def spec_score(word_id, count, token_count): # TODO: fix the math for averaging 
     if current_db_score is None:
         return specificity_score
     
-    specificity_score = specificity_score - current_db_score
+    specificity_score = (0.5 * specificity_score) + (0.2 * current_db_score)
     
     print("SPECIFICITY SCORE:", specificity_score)  # DELETE THIS
     

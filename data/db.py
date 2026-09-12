@@ -68,13 +68,13 @@ def word_sentence_link(word_id, sentence_id):
 
 # Scoring functions
 # TODO: there has to be a way to fetch the specficic score from one function
-def fetch_frequency_score(word_id):
-    cur.execute("SELECT frequency_score FROM words WHERE id = ?", (word_id,))
+def fetch_frequency_score(id):
+    cur.execute("SELECT frequency_score FROM words WHERE id = ?", (id,))
 
     return cur.fetchone()[0]
 
-def fetch_specificity_score(word_id):
-    cur.execute("SELECT specificity_score FROM words WHERE id = ?", (word_id,))
+def fetch_specificity_score(id):
+    cur.execute("SELECT specificity_score FROM words WHERE id = ?", (id,))
 
     return cur.fetchone()[0]
 
