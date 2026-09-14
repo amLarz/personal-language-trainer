@@ -111,8 +111,8 @@ def save_and_fetch(processed_text):
             word_sentence_link(word_id, sentence_id)
             # select the current token's word and id
             current_word_token = cur.execute("SELECT * FROM words WHERE id = ?", (word_id,)).fetchone()
-            current_sentence_token = cur.execute("SELECT token_count FROM sentences WHERE id = ?", (sentence_id,)).fetchone()
-            current_token = dict(current_word_token) | dict(current_sentence_token)
+            current_token_count = cur.execute("SELECT token_count FROM sentences WHERE id = ?", (sentence_id,)).fetchone()
+            current_token = dict(current_word_token) | dict(current_token_count)
             # insert current token into recent inserts list
             recent_inserts.append(dict(current_token))
 
@@ -130,9 +130,7 @@ def save_and_fetch(processed_text):
             counted_inserts[word_id]["_count"] += 1
     
     final_inserts = list(counted_inserts.values())
-    final_inserts.insert(0, {"token_count": record["token_count"]})  # TODO: fix this because this does not look good
     
-    print(final_inserts)  # DELETE THIS
     con.commit()
 
     return final_inserts # returns a list of dictionaries 

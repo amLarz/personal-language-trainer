@@ -37,12 +37,12 @@ def spec_score(word_id, count, token_count): # TODO: fix the math for averaging 
 
 # main function for stat scoring, parameters of packed words table
 def stat_scoring(table):
-    token_count = table[0]["token_count"] # TODO: fix this because this does not look good
     
     for row in table[1:]: # TODO: REMOVE THE SLICE OMD FIX THIS
         
         word_id = row["id"]
         count = row["_count"]
+        token_count = row["token_count"]
         
         # calculate frequency score
         frequency_score = freq_score(word_id, count)
