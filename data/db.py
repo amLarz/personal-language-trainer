@@ -50,8 +50,11 @@ def insert_word(word, lemma):
     # return the word id
     return cur.execute("SELECT id FROM words WHERE word = ?", (word,)).fetchone()[0]
 
+
 def insert_sentence(sentence, token_count):
-    cur.execute("INSERT INTO sentences (sentence, token_count) VALUES (?, ?)", (sentence, token_count))
+    cur.execute(
+        "INSERT INTO sentences (sentence, token_count) VALUES (?, ?)", (sentence, token_count)
+    )
 
     # return the last sentence id
     return cur.lastrowid
@@ -88,10 +91,16 @@ class FetchFromDB:
         return cur.fetchone()[0]
 
 
-def push_statistical_score(word_id, frequency_score, specificity_score):  # TODO: add specificity too
-    cur.execute("UPDATE words SET frequency_score = ?, specificity_score = ? WHERE id = ?", (frequency_score, specificity_score, word_id))
+def push_statistical_score(
+    word_id, frequency_score, specificity_score
+):  # TODO: add specificity too
+    cur.execute(
+        "UPDATE words SET frequency_score = ?, specificity_score = ? WHERE id = ?",
+        (frequency_score, specificity_score, word_id),
+    )
 
     return 0
+
 
 # TODO: fix, make it faster
 def save_and_fetch(processed_text):
@@ -110,25 +119,30 @@ def save_and_fetch(processed_text):
             # link the word and sentence
             word_sentence_link(word_id, sentence_id)
             # select the current token's word and id
-            current_token = dict(cur.execute("SELECT * FROM words WHERE id = ?", (word_id,)).fetchone()) | dict(cur.execute("SELECT token_count FROM sentences WHERE id = ?", (sentence_id,)).fetchone())
+            current_token = dict(
+                cur.execute("SELECT * FROM words WHERE id = ?", (word_id,)).fetchone()
+            ) | dict(
+                cur.execute(
+                    "SELECT token_count FROM sentences WHERE id = ?", (sentence_id,)
+                ).fetchone()
+            )
             # insert current token into recent inserts list
             recent_inserts.append(dict(current_token))
 
-    # TODO: find a way to connect token count to word table return
     counted_inserts = {}
 
     for item in recent_inserts:
         word_id = item["id"]
-        
+
         if word_id not in counted_inserts:
             counted_inserts[word_id] = item.copy()
             counted_inserts[word_id]["_count"] = 1
-            
+
         else:
             counted_inserts[word_id]["_count"] += 1
-    
+
     final_inserts = list(counted_inserts.values())
-    
+
     con.commit()
 
-    return final_inserts # returns a list of dictionaries 
+    return final_inserts  # returns a list of dictionaries

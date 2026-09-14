@@ -18,37 +18,38 @@ def freq_score(word_id, count):
 
     return frequency_score
 
-def spec_score(word_id, count, token_count): # TODO: fix the math for averaging or smoothing
-    
+
+def spec_score(word_id, count, token_count):  # TODO: fix the math for averaging or smoothing
+
     current_db_score = FetchFromDB(word_id).specificity_score()
-    reference_zipf = wordfreq.zipf_frequency(FetchFromDB(word_id).word(), 'en')
+    reference_zipf = wordfreq.zipf_frequency(FetchFromDB(word_id).word(), "en")
     word_zipf = math.log10((count / token_count) * 1e9)
-    
+
     specificity_score = word_zipf - reference_zipf
-    
+
     if current_db_score is None:
         return specificity_score
-    
+
     specificity_score = (0.5 * specificity_score) + (0.2 * current_db_score)
-    
+
     print("SPECIFICITY SCORE:", specificity_score)  # DELETE THIS
-    
+
     return specificity_score
+
 
 # main function for stat scoring, parameters of packed words table
 def stat_scoring(table):
-    
-    for row in table[1:]: # TODO: REMOVE THE SLICE OMD FIX THIS
-        
+
+    for row in table[1:]:  # TODO: REMOVE THE SLICE OMD FIX THIS
         word_id = row["id"]
         count = row["_count"]
         token_count = row["token_count"]
-        
+
         # calculate frequency score
         frequency_score = freq_score(word_id, count)
 
         # calculate specificity score
         specificity_score = spec_score(word_id, count, token_count)
-        
+
         push_statistical_score(word_id, frequency_score, specificity_score)
     return 0
