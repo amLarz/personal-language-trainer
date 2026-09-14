@@ -110,9 +110,7 @@ def save_and_fetch(processed_text):
             # link the word and sentence
             word_sentence_link(word_id, sentence_id)
             # select the current token's word and id
-            current_word_token = cur.execute("SELECT * FROM words WHERE id = ?", (word_id,)).fetchone()
-            current_token_count = cur.execute("SELECT token_count FROM sentences WHERE id = ?", (sentence_id,)).fetchone()
-            current_token = dict(current_word_token) | dict(current_token_count)
+            current_token = dict(cur.execute("SELECT * FROM words WHERE id = ?", (word_id,)).fetchone()) | dict(cur.execute("SELECT token_count FROM sentences WHERE id = ?", (sentence_id,)).fetchone())
             # insert current token into recent inserts list
             recent_inserts.append(dict(current_token))
 
