@@ -1,11 +1,11 @@
 import math
 import wordfreq
-from data.db import fetch_frequency_score, fetch_specificity_score, push_statistical_score, fetch_word
+from data.db import FetchFromDB, push_statistical_score
 
 
 # frequency function for stat scoring, parameters of unpacked words table
 def freq_score(word_id, count):
-    current_db_score = fetch_frequency_score(word_id)
+    current_db_score = FetchFromDB(word_id).frequency_score()
 
     token_frequency_score = math.log10(count + 1)  # Use log to scale the frequency score
     print("OLD:", token_frequency_score)  # DELETE THIS
@@ -20,8 +20,8 @@ def freq_score(word_id, count):
 
 def spec_score(word_id, count, token_count): # TODO: fix the math for averaging or smoothing
     
-    current_db_score = fetch_specificity_score(word_id)
-    reference_zipf = wordfreq.zipf_frequency(fetch_word(word_id), 'en')
+    current_db_score = FetchFromDB(word_id).specificity_score()
+    reference_zipf = wordfreq.zipf_frequency(FetchFromDB(word_id).word(), 'en')
     word_zipf = math.log10((count / token_count) * 1e9)
     
     specificity_score = word_zipf - reference_zipf

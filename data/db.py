@@ -68,20 +68,24 @@ def word_sentence_link(word_id, sentence_id):
 
 # Scoring functions
 # TODO: there has to be a way to fetch the specficic score from one function
-def fetch_frequency_score(id):
-    cur.execute("SELECT frequency_score FROM words WHERE id = ?", (id,))
+class FetchFromDB:
+    def __init__(self, id):
+        self.id = id
 
-    return cur.fetchone()[0]
+    def frequency_score(self):
+        cur.execute("SELECT frequency_score FROM words WHERE id = ?", (self.id,))
 
-def fetch_specificity_score(id):
-    cur.execute("SELECT specificity_score FROM words WHERE id = ?", (id,))
+        return cur.fetchone()[0]
 
-    return cur.fetchone()[0]
+    def specificity_score(self):
+        cur.execute("SELECT specificity_score FROM words WHERE id = ?", (self.id,))
 
-def fetch_word(id):
-    cur.execute("SELECT word FROM words WHERE id = ?", (id,))
+        return cur.fetchone()[0]
 
-    return cur.fetchone()[0]
+    def word(self):
+        cur.execute("SELECT word FROM words WHERE id = ?", (self.id,))
+
+        return cur.fetchone()[0]
 
 
 def push_statistical_score(word_id, frequency_score, specificity_score):  # TODO: add specificity too
@@ -106,7 +110,9 @@ def save_and_fetch(processed_text):
             # link the word and sentence
             word_sentence_link(word_id, sentence_id)
             # select the current token's word and id
-            current_token = cur.execute("SELECT * FROM words WHERE id = ?", (word_id,)).fetchone()
+            current_word_token = cur.execute("SELECT * FROM words WHERE id = ?", (word_id,)).fetchone()
+            current_sentence_token = cur.execute("SELECT token_count FROM sentences WHERE id = ?", (sentence_id,)).fetchone()
+            current_token = dict(current_word_token) | dict(current_sentence_token)
             # insert current token into recent inserts list
             recent_inserts.append(dict(current_token))
 
