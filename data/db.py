@@ -14,7 +14,7 @@ cur.execute("""CREATE TABLE IF NOT EXISTS words (
     lemma TEXT NOT NULL,
     frequency_score INTEGER DEFAULT 0,
     specificity_score INTEGER DEFAULT 0,
-    count INTEGER DEFAULT 0
+    total_count INTEGER DEFAULT 0
 )""")
 
 # SENTENCES TABLE
@@ -45,7 +45,7 @@ con.commit()
 def insert_word(word, lemma):
     cur.execute("INSERT OR IGNORE INTO words (word, lemma) VALUES (?, ?)", (word, lemma))
 
-    cur.execute("UPDATE words SET count = count + 1 WHERE word = ?", (word,))
+    cur.execute("UPDATE words SET total_count = total_count + 1 WHERE word = ?", (word,))
 
     # return the word id
     return cur.execute("SELECT id FROM words WHERE word = ?", (word,)).fetchone()[0]
@@ -136,10 +136,10 @@ def save_and_fetch(processed_text):
 
         if word_id not in counted_inserts:
             counted_inserts[word_id] = item.copy()
-            counted_inserts[word_id]["_count"] = 1
+            counted_inserts[word_id]["session_count"] = 1
 
         else:
-            counted_inserts[word_id]["_count"] += 1
+            counted_inserts[word_id]["session_count"] += 1
 
     final_inserts = list(counted_inserts.values())
 

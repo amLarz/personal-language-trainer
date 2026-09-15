@@ -5,32 +5,18 @@ from data.db import FetchFromDB, push_statistical_score
 
 # frequency function for stat scoring, parameters of unpacked words table
 def freq_score(word_id, count):
-    current_db_score = FetchFromDB(word_id).frequency_score()
+    frequency_score = math.log10(count + 1)  # Use log to scale the frequency score
 
-    token_frequency_score = math.log10(count + 1)  # Use log to scale the frequency score
-    print("OLD:", token_frequency_score)  # DELETE THIS
-
-    if current_db_score is None:
-        return token_frequency_score
-
-    frequency_score = (0.5 * token_frequency_score) + (0.2 * current_db_score)
     print("NEW", frequency_score)  # DELETE THIS
 
     return frequency_score
 
 
 def spec_score(word_id, count, token_count):  # TODO: fix the math for averaging or smoothing
-
-    current_db_score = FetchFromDB(word_id).specificity_score()
     reference_zipf = wordfreq.zipf_frequency(FetchFromDB(word_id).word(), "en")
     word_zipf = math.log10((count / token_count) * 1e9)
 
     specificity_score = word_zipf - reference_zipf
-
-    if current_db_score is None:
-        return specificity_score
-
-    specificity_score = (0.5 * specificity_score) + (0.2 * current_db_score)
 
     print("SPECIFICITY SCORE:", specificity_score)  # DELETE THIS
 
@@ -40,16 +26,17 @@ def spec_score(word_id, count, token_count):  # TODO: fix the math for averaging
 # main function for stat scoring, parameters of packed words table
 def stat_scoring(table):
 
-    for row in table[1:]:  # TODO: REMOVE THE SLICE OMD FIX THIS
+    for row in table:
         word_id = row["id"]
-        count = row["_count"]
+        session_count = row["session_count"]
+        count = row["total_count"]
         token_count = row["token_count"]
 
         # calculate frequency score
         frequency_score = freq_score(word_id, count)
 
         # calculate specificity score
-        specificity_score = spec_score(word_id, count, token_count)
+        specificity_score = spec_score(word_id, session_count, token_count)
 
         push_statistical_score(word_id, frequency_score, specificity_score)
     return 0
