@@ -11,6 +11,7 @@ cur.execute("""CREATE TABLE IF NOT EXISTS words (
     id INTEGER PRIMARY KEY,
     word TEXT NOT NULL UNIQUE,
     lemma TEXT NOT NULL,
+    translation TEXT,
     frequency_score INTEGER DEFAULT 0,
     specificity_score INTEGER DEFAULT 0,
     total_count INTEGER DEFAULT 0
@@ -20,6 +21,7 @@ cur.execute("""CREATE TABLE IF NOT EXISTS words (
 cur.execute("""CREATE TABLE IF NOT EXISTS sentences (
     id INTEGER PRIMARY KEY,
     sentence TEXT NOT NULL,
+    translation TEXT,
     token_count INTEGER DEFAULT 0
 )""")
 
@@ -59,6 +61,19 @@ def insert_sentence(sentence, token_count):
     # return the last sentence id
     return cur.lastrowid
 
+def insert_word_translations(word, translation):
+    cur.execute(
+        "UPDATE words SET translation = ? WHERE word = ?", (translation, word)
+    )
+
+    return 0
+
+def insert_sentence_translations(sentence, translation):
+    cur.execute(
+        "UPDATE sentences SET translation = ? WHERE sentence = ?", (translation, sentence)
+    )
+
+    return 0
 
 def word_sentence_link(word_id, sentence_id):
     cur.execute(
