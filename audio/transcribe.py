@@ -1,9 +1,10 @@
 import whisper
 
+# download the model
+model = whisper.load_model("base")
 
 def transcribe_audio(audio):
-    # download the model and get result
-    model = whisper.load_model("base")
+    # get tge result of the transcription
     result = model.transcribe(audio)
 
     return result["text"]
