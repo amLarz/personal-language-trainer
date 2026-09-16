@@ -61,18 +61,20 @@ def insert_sentence(sentence, token_count):
     # return the last sentence id
     return cur.lastrowid
 
-def insert_word_translations(word, translation):
+def insert_word_translation(word, translation):
     cur.execute(
         "UPDATE words SET translation = ? WHERE word = ?", (translation, word)
     )
 
+    con.commit()
     return 0
 
-def insert_sentence_translations(sentence, translation):
+def insert_sentence_translation(sentence, translation):
     cur.execute(
         "UPDATE sentences SET translation = ? WHERE sentence = ?", (translation, sentence)
     )
 
+    con.commit()
     return 0
 
 def word_sentence_link(word_id, sentence_id):
@@ -104,6 +106,11 @@ class FetchFromDB:
         cur.execute("SELECT word FROM words WHERE id = ?", (self.id,))
 
         return cur.fetchone()[0]
+    
+    def sentence(self):
+        cur.execute("SELECT sentence FROM sentences WHERE id = ?", (self.id,))
+
+        return cur.fetchone()[0]
 
 
 def push_statistical_score(
@@ -121,6 +128,7 @@ def push_statistical_score(
 def save_and_fetch(record):
     # insert the sentence and get its id
     sentence_id = insert_sentence(record["sentence"], record["token_count"])
+    sentence_insert = dict(cur.execute("SELECT id, sentence FROM sentences WHERE id = ?", (sentence_id,)).fetchone())
 
     # token label
     tokens = record["tokens"]
@@ -156,8 +164,8 @@ def save_and_fetch(record):
         else:
             counted_inserts[word_id]["session_count"] += 1
 
-    final_inserts = list(counted_inserts.values())
+    word_inserts = list(counted_inserts.values())
 
     con.commit()
 
-    return final_inserts  # returns a list of dictionaries
+    return sentence_insert, word_inserts  # returns a list of dictionaries

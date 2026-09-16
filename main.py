@@ -15,12 +15,12 @@ def main(recording, input_type):
     print("Processed Text:", processed_text)
 
     # update the word frequency in the database
-    word_snapshot = save_and_fetch(processed_text)
-    print("Snapshot:", word_snapshot)
+    sentence, words = save_and_fetch(processed_text)
+    print("Snapshot:", (sentence, words))
 
     # statistical scoring and translation of the processed text
-    stat_scoring(word_snapshot)
-    translate_record(processed_text)
+    stat_scoring(words)
+    translate_record(sentence, words)
 
 
 if __name__ == "__main__":
