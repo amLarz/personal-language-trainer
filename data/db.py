@@ -103,31 +103,31 @@ def push_statistical_score(
 
 
 # TODO: fix, make it faster
-def save_and_fetch(processed_text):
-    for record in processed_text:
-        # insert the sentence and get its id
-        sentence_id = insert_sentence(record["sentence"], record["token_count"])
+def save_and_fetch(record):
+    # insert the sentence and get its id
+    sentence_id = insert_sentence(record["sentence"], record["token_count"])
 
-        # token label
-        tokens = record["tokens"]
-        # recent inserts list
-        recent_inserts = []
+    # token label
+    tokens = record["tokens"]
+    # recent inserts list
+    recent_inserts = []
 
-        for token in tokens:
-            word_id = insert_word(token["text"], token["lemma"])
+    for token in tokens:
+        word_id = insert_word(token["text"], token["lemma"])
 
-            # link the word and sentence
-            word_sentence_link(word_id, sentence_id)
-            # select the current token's word and id
-            current_token = dict(
-                cur.execute("SELECT * FROM words WHERE id = ?", (word_id,)).fetchone()
-            ) | dict(
-                cur.execute(
-                    "SELECT token_count FROM sentences WHERE id = ?", (sentence_id,)
-                ).fetchone()
-            )
-            # insert current token into recent inserts list
-            recent_inserts.append(dict(current_token))
+        # link the word and sentence
+        word_sentence_link(word_id, sentence_id)
+        # select the current token's word and id
+        current_token = dict(
+            cur.execute("SELECT * FROM words WHERE id = ?", (word_id,)).fetchone()
+        ) | dict(
+            cur.execute(
+                "SELECT token_count FROM sentences WHERE id = ?", (sentence_id,)
+            ).fetchone()
+        )
+        
+        # insert current token into recent inserts list
+        recent_inserts.append(dict(current_token))
 
     counted_inserts = {}
 

@@ -57,19 +57,16 @@ def process_text(text):
     # process the text using spaCy
     doc = nlp(text)
     sents = list(doc.sents)
-    results = []
     # goes through each sentence
     for sent in sents:
         # filter the text to remove unwanted tokens
         filtered_text = filter_text(sent)
 
         # loops over filtered tokens and classifies them
-        results.append(
-            {
+        results = {
                 "sentence": sent.text,
                 "token_count": len(sent),
-                "tokens": [classify_words(*token) for token in filtered_text],
+                "tokens": [classify_words(*token) for token in filtered_text]
             }
-        )
 
     return results
