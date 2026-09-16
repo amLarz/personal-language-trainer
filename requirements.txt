@@ -3,3 +3,4 @@ whisper
 spacy
 wordfreq
 google-cloud-translate
+python-dotenv

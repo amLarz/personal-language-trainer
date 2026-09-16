@@ -1,8 +1,12 @@
+import os 
+from dotenv import load_dotenv
+
 from google.cloud import translate_v3 as translate
 
 client = translate.TranslationServiceClient()
 
-project_id = ""
+load_dotenv()  # Load environment variables from .env file
+project_id = os.getenv("GOOGLE_CLOUD_PROJECT_ID")
 
 response = client.translate_text(
     request={
