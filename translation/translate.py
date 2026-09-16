@@ -9,7 +9,6 @@ def translate_record(record):
     for token in record["tokens"]:
         translate(token["text"])
         
-        
     insert_sentence_translation(record["sentence"], translated_sentence)
     insert_word_translation(record["tokens"], translated_sentence)
     
