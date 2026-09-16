@@ -4,20 +4,12 @@ from data.db import insert_sentence_translation, insert_word_translation, FetchF
 
 def translate_record(sentence, words):
     
-    if FetchFromDB(sentence["id"]).sentence() == sentence["sentence"]:
-        pass
-    else:
-        translated_sentence = translate(sentence["sentence"])
-        insert_sentence_translation(sentence["sentence"], translated_sentence)
-        print(f"Translated sentence: {translated_sentence}") # DELETE THIS
-        
-    for word in words:
-        if FetchFromDB(word["id"]).word() == word["word"]:
-            pass
-        else:
-            translated_word = translate(word["word"])
-            insert_word_translation(word["word"], translated_word)
+    insert_sentence_translation(sentence["sentence"], translate(sentence["sentence"]))
     
+    for word in words:
+        insert_word_translation(word["word"], translate(word["word"]))
+        
+    print(f"sentence translation inserted: {translate(sentence['sentence'])}") # DELETE THIS
     print(f"Translated words: {[translate(word['word']) for word in words]}") # DELETE THIS
         
     
