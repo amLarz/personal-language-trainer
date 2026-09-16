@@ -1,5 +1,3 @@
-import csv
-
 import spacy
 
 # load the English NLP model
