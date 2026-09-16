@@ -16,18 +16,34 @@ def filter_text(text):
         "SPACE",
     }
 
+    # fix contractions
+    CONTRACTIONS = {
+        "n't",
+        "'s",
+        "'re",
+        "'ve",
+        "'ll",
+        "'d",
+        "'m",
+    }
+
     # filter out expletives
-    filtered_tokens = [
-        token for token in text if token.dep_ not in ORPHAN_DEPS and token.pos_ not in FILTERED_POS
-    ]
+    filtered_tokens = []
+    for token in text:
+        if token.dep_ not in ORPHAN_DEPS and token.pos_ not in FILTERED_POS:
+            word = (
+                token.lemma_ if token.text in CONTRACTIONS else token.text
+            )  # Turn to lemma if a contraction.
+
+            filtered_tokens.append((token, word))
 
     return filtered_tokens
 
 
-def classify_words(token):
+def classify_words(token, word):
 
     return {
-        "text": token.text.lower(),
+        "text": word,
         "lemma": token.lemma_,
         "pos": token.pos_,
         "dep": token.dep_,
@@ -51,7 +67,7 @@ def process_text(text):
             {
                 "sentence": sent.text,
                 "token_count": len(sent),
-                "tokens": [classify_words(token) for token in filtered_text],
+                "tokens": [classify_words(*token) for token in filtered_text],
             }
         )
 

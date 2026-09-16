@@ -43,7 +43,10 @@ con.commit()
 
 # INSERT FUNCTIONS
 def insert_word(word, lemma):
-    cur.execute("INSERT INTO words (word, lemma, total_count) VALUES (?, ?, 1) ON CONFLICT(word) DO UPDATE SET total_count = total_count + 1 RETURNING id", (word, lemma))
+    cur.execute(
+        "INSERT INTO words (word, lemma, total_count) VALUES (?, ?, 1) ON CONFLICT(word) DO UPDATE SET total_count = total_count + 1 RETURNING id",
+        (word, lemma),
+    )
 
     # return the word id
     return cur.fetchone()[0]
