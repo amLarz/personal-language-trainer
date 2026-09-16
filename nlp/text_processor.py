@@ -43,10 +43,11 @@ def filter_text(text):
 def classify_words(token, word):
 
     return {
-        "text": word,
+        "text": word.lower() if token.pos_ != "PROPN" else word,
         "lemma": token.lemma_,
         "pos": token.pos_,
         "dep": token.dep_,
+        "tag": token.tag_,
         "is_stop": token.is_stop,
     }
 

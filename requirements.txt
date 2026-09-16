@@ -2,4 +2,4 @@ sounddevice
 whisper
 spacy
 wordfreq
-
+google-cloud-translate
