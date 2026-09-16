@@ -1,6 +1,5 @@
 import sqlite3
 from data.paths import DATABASE_DIR
-from collections import Counter
 
 con = sqlite3.connect(DATABASE_DIR / "mandarin.db")
 con.row_factory = sqlite3.Row
