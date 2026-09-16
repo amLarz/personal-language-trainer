@@ -2,7 +2,7 @@ from google.cloud import translate_v3 as translate
 
 client = translate.TranslationServiceClient()
 
-project_id = "project-d46d15ba-c5a2-41e0-93d"
+project_id = ""
 
 response = client.translate_text(
     request={
