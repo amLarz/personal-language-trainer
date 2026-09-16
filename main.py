@@ -1,7 +1,7 @@
 from audio.record import recording_audio
 from audio.transcribe import transcribe_audio
 from data.db import save_and_fetch
-from data.stat_scoring import stat_scoring
+from scoring.stat_scoring import stat_scoring
 from nlp.text_processor import process_text
 
 
