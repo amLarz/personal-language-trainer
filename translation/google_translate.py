@@ -9,7 +9,7 @@ client = translate.TranslationServiceClient()
 load_dotenv()  # Load environment variables from .env file
 project_id = os.getenv("GOOGLE_CLOUD_PROJECT_ID")
 
-def translate(text, source_language="en", target_language="zh"): # TODO: HARDCODED CHANGE IN FUTURE
+def translate(text, source_language="en", target_language="zh-CN"): # TODO: HARDCODED CHANGE IN FUTURE
     response = client.translate_text(
         request={
             "parent": f"projects/{project_id}/locations/global",
