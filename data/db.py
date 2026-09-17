@@ -65,7 +65,7 @@ def insert_sentence(sentence, token_count):
 
 def insert_word_translation(word, translation):
     cur.execute(
-        "UPDATE words SET translation = ? WHERE word = ?", (translation, word)
+        "UPDATE words SET hanzi = ? WHERE word = ?", (translation, word)
     )
 
     con.commit()
@@ -73,7 +73,7 @@ def insert_word_translation(word, translation):
 
 def insert_sentence_translation(sentence, translation):
     cur.execute(
-        "UPDATE sentences SET translation = ? WHERE sentence = ?", (translation, sentence)
+        "UPDATE sentences SET hanzi = ? WHERE sentence = ?", (translation, sentence)
     )
 
     con.commit()
