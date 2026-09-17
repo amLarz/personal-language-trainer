@@ -1,13 +1,19 @@
 from translation.google_translate import translate
 from data.db import insert_sentence_translation, insert_word_translation, FetchFromDB
 # TODO ^^^ TURN TO CLASS
+from pypinyin import pinyin
+
+PY_PINYIN_DEFAULT_STYLE = Style.TONE  # TODO: HARDCODED CHANGE IN FUTURE
+PY_PINYIN_DEFAULT_HETERONYM = False  # TODO: HARDCODED CHANGE IN FUTURE
 
 def translate_record(sentence, words):
-    
-    insert_sentence_translation(sentence["sentence"], translate(sentence["sentence"]))
+    translation = translate(sentence["sentence"])
+    insert_sentence_translation(sentence["sentence"], translation))
     
     for word in words:
-        insert_word_translation(word["word"], translate(word["word"]))
+        translation = translate(word["word"])
+        insert_word_translation(word["word"], translation)
+        pinyin = pinyin(translation, style=PY_PINYIN_DEFAULT_STYLE, heteronym=PY_PINYIN_DEFAULT_HETERONYM)
         
     print(f"sentence translation inserted: {translate(sentence['sentence'])}") # DELETE THIS
     print(f"Translated words: {[translate(word['word']) for word in words]}") # DELETE THIS

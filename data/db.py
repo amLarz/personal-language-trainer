@@ -9,9 +9,10 @@ cur.execute("PRAGMA foreign_keys = ON")
 # WORDS TABLE
 cur.execute("""CREATE TABLE IF NOT EXISTS words (
     id INTEGER PRIMARY KEY,
+    hanzi TEXT,
+    pinyin TEXT,
     word TEXT NOT NULL UNIQUE,
     lemma TEXT NOT NULL,
-    translation TEXT,
     frequency_score INTEGER DEFAULT 0,
     specificity_score INTEGER DEFAULT 0,
     total_count INTEGER DEFAULT 0
@@ -20,8 +21,9 @@ cur.execute("""CREATE TABLE IF NOT EXISTS words (
 # SENTENCES TABLE
 cur.execute("""CREATE TABLE IF NOT EXISTS sentences (
     id INTEGER PRIMARY KEY,
+    hanzi TEXT,
+    pinyin TEXT,
     sentence TEXT NOT NULL,
-    translation TEXT,
     token_count INTEGER DEFAULT 0
 )""")
 
