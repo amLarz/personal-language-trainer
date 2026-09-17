@@ -45,47 +45,57 @@ con.commit()
 
 
 # INSERT FUNCTIONS
-def insert_word(word, lemma):
-    cur.execute(
-        "INSERT INTO words (word, lemma, total_count) VALUES (?, ?, 1) ON CONFLICT(word) DO UPDATE SET total_count = total_count + 1 RETURNING id",
-        (word, lemma),
-    )
+class InsertFunctions:
+    def __init__(self, word, lemma, sentence, token_count):
+        self.word = word
+        self.lemma = lemma
+        self.sentence = sentence
+        self.token_count = token_count
+        self.hanzi = hanzi
+        self.pinyin = pinyin
+        
+    def insert_word(word, lemma):
+        cur.execute(
+            "INSERT INTO words (word, lemma, total_count) VALUES (?, ?, 1) ON CONFLICT(word) DO UPDATE SET total_count = total_count + 1 RETURNING id",
+            (word, lemma),
+        )
 
-    # return the word id
-    return cur.fetchone()[0]
+        # return the word id
+        return cur.fetchone()[0]
 
 
-def insert_sentence(sentence, token_count):
-    cur.execute(
-        "INSERT INTO sentences (sentence, token_count) VALUES (?, ?)", (sentence, token_count)
-    )
+    def insert_sentence(sentence, token_count):
+        cur.execute(
+            "INSERT INTO sentences (sentence, token_count) VALUES (?, ?)", (sentence, token_count)
+        )
 
-    # return the last sentence id
-    return cur.lastrowid
+        # return the inserted sentence
+        return cur.lastrowid
 
-def insert_word_translation(word, translation):
-    cur.execute(
-        "UPDATE words SET hanzi = ? WHERE word = ?", (translation, word)
-    )
+    def insert_word_hanzi(word, hanzi):
+        cur.execute(
+            "UPDATE words SET hanzi = ? WHERE word = ?", (hanzi, word)
+        ) # TODO: fishy
 
-    con.commit()
-    return 0
+        con.commit()
+        return 0
 
-def insert_sentence_translation(sentence, translation):
-    cur.execute(
-        "UPDATE sentences SET hanzi = ? WHERE sentence = ?", (translation, sentence)
-    )
+    def insert_sentence_hanzi(sentence, hanzi):
+        cur.execute(
+            "UPDATE sentences SET hanzi = ? WHERE sentence = ?", (hanzi, sentence)
+        ) # TODO: fishy
 
-    con.commit()
-    return 0
+        con.commit()
+        return 0
 
-def word_sentence_link(word_id, sentence_id):
-    cur.execute(
-        "INSERT OR IGNORE INTO words_sentences_links (word_id, sentence_id) VALUES (?, ?)",
-        (word_id, sentence_id),
-    )
+    def word_sentence_link(word_id, sentence_id):
+        cur.execute(
+            "INSERT OR IGNORE INTO words_sentences_links (word_id, sentence_id) VALUES (?, ?)",
+            (word_id, sentence_id),
+        )
 
-    return 0
+        con.commit()
+        return 0
 
 
 # Scoring functions
