@@ -45,47 +45,60 @@ con.commit()
 
 
 # INSERT FUNCTIONS
-def insert_word(word, lemma):
-    cur.execute(
-        "INSERT INTO words (word, lemma, total_count) VALUES (?, ?, 1) ON CONFLICT(word) DO UPDATE SET total_count = total_count + 1 RETURNING id",
-        (word, lemma),
-    )
+class InsertFunction:
+    def __init__(self, word=None, lemma=None, sentence=None, token_count=None, word_id=None, sentence_id=None):
+        self.word = word
+        self.lemma = lemma
+        self.sentence = sentence
+        self.token_count = token_count
+        self.word_id = word_id
+        self.sentence_id = sentence_id
+        #self.hanzi = hanzi # TODO: for translation
+        #self.pinyin = pinyin # TODO: for translation
+        
+    def insert_word(self):
+        cur.execute(
+            "INSERT INTO words (word, lemma, total_count) VALUES (?, ?, 1) ON CONFLICT(word) DO UPDATE SET total_count = total_count + 1 RETURNING id",
+            (self.word, self.lemma),
+        )
 
-    # return the word id
-    return cur.fetchone()[0]
+        # return the word id
+        return cur.fetchone()[0]
 
 
-def insert_sentence(sentence, token_count):
-    cur.execute(
-        "INSERT INTO sentences (sentence, token_count) VALUES (?, ?)", (sentence, token_count)
-    )
+    def insert_sentence(self):
+        print(type(self.sentence))
+        cur.execute(
+            "INSERT INTO sentences (sentence, token_count) VALUES (?, ?)", (self.sentence, self.token_count)
+        )
 
-    # return the last sentence id
-    return cur.lastrowid
+        # return the inserted sentence
+        return cur.lastrowid
 
-def insert_word_translation(word, translation):
-    cur.execute(
-        "UPDATE words SET translation = ? WHERE word = ?", (translation, word)
-    )
+    def insert_word_hanzi(self):
+        cur.execute(
+            "UPDATE words SET hanzi = ? WHERE word = ?", (self.hanzi, self.word)
+        ) # TODO: fishy
 
-    con.commit()
-    return 0
+        con.commit()
+        return 0
 
-def insert_sentence_translation(sentence, translation):
-    cur.execute(
-        "UPDATE sentences SET translation = ? WHERE sentence = ?", (translation, sentence)
-    )
+    def insert_sentence_hanzi(self):
+        cur.execute(
+            "UPDATE sentences SET hanzi = ? WHERE sentence = ?", (self.hanzi, self.sentence)
+        ) # TODO: fishy
 
-    con.commit()
-    return 0
+        con.commit()
+        return 0
 
-def word_sentence_link(word_id, sentence_id):
-    cur.execute(
-        "INSERT OR IGNORE INTO words_sentences_links (word_id, sentence_id) VALUES (?, ?)",
-        (word_id, sentence_id),
-    )
+    def word_sentence_link(self):
+        cur.execute(
+            "INSERT OR IGNORE INTO words_sentences_links (word_id, sentence_id) VALUES (?, ?)",
+            (self.word_id, self.sentence_id),
+        )
 
-    return 0
+        con.commit()
+        return 0
 
 
 # Scoring functions
@@ -129,7 +142,7 @@ def push_statistical_score(
 # TODO: fix, make it faster
 def save_and_fetch(record):
     # insert the sentence and get its id
-    sentence_id = insert_sentence(record["sentence"], record["token_count"])
+    sentence_id = InsertFunction(sentence=record["sentence"], token_count=record["token_count"]).insert_sentence()
     sentence_insert = dict(cur.execute("SELECT id, sentence FROM sentences WHERE id = ?", (sentence_id,)).fetchone())
 
     # token label
@@ -138,10 +151,12 @@ def save_and_fetch(record):
     recent_inserts = []
 
     for token in tokens:
-        word_id = insert_word(token["text"], token["lemma"])
+        
+        # get word id with word and lemma with insert_word function
+        word_id = InsertFunction(word=token["text"], lemma=token["lemma"]).insert_word()
 
         # link the word and sentence
-        word_sentence_link(word_id, sentence_id)
+        InsertFunction(word_id, sentence_id).word_sentence_link()
         # select the current token's word and id
         current_token = dict(
             cur.execute("SELECT * FROM words WHERE id = ?", (word_id,)).fetchone()
