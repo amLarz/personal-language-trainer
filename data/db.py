@@ -46,16 +46,18 @@ con.commit()
 
 # INSERT FUNCTIONS
 class InsertFunction:
-    def __init__(self, word=None, lemma=None, sentence=None, token_count=None, word_id=None, sentence_id=None):
+    def __init__(
+        self, word=None, lemma=None, sentence=None, token_count=None, word_id=None, sentence_id=None
+    ):
         self.word = word
         self.lemma = lemma
         self.sentence = sentence
         self.token_count = token_count
         self.word_id = word_id
         self.sentence_id = sentence_id
-        #self.hanzi = hanzi # TODO: for translation
-        #self.pinyin = pinyin # TODO: for translation
-        
+        # self.hanzi = hanzi # TODO: for translation
+        # self.pinyin = pinyin # TODO: for translation
+
     def insert_word(self):
         cur.execute(
             "INSERT INTO words (word, lemma, total_count) VALUES (?, ?, 1) ON CONFLICT(word) DO UPDATE SET total_count = total_count + 1 RETURNING id",
@@ -65,11 +67,11 @@ class InsertFunction:
         # return the word id
         return cur.fetchone()[0]
 
-
     def insert_sentence(self):
         print(type(self.sentence))
         cur.execute(
-            "INSERT INTO sentences (sentence, token_count) VALUES (?, ?)", (self.sentence, self.token_count)
+            "INSERT INTO sentences (sentence, token_count) VALUES (?, ?)",
+            (self.sentence, self.token_count),
         )
 
         # return the inserted sentence
@@ -78,7 +80,7 @@ class InsertFunction:
     def insert_word_hanzi(self):
         cur.execute(
             "UPDATE words SET hanzi = ? WHERE word = ?", (self.hanzi, self.word)
-        ) # TODO: fishy
+        )  # TODO: fishy
 
         con.commit()
         return 0
@@ -86,7 +88,7 @@ class InsertFunction:
     def insert_sentence_hanzi(self):
         cur.execute(
             "UPDATE sentences SET hanzi = ? WHERE sentence = ?", (self.hanzi, self.sentence)
-        ) # TODO: fishy
+        )  # TODO: fishy
 
         con.commit()
         return 0
@@ -121,7 +123,7 @@ class FetchFromDB:
         cur.execute("SELECT word FROM words WHERE id = ?", (self.id,))
 
         return cur.fetchone()[0]
-    
+
     def sentence(self):
         cur.execute("SELECT sentence FROM sentences WHERE id = ?", (self.id,))
 
@@ -142,8 +144,12 @@ def push_statistical_score(
 # TODO: fix, make it faster
 def save_and_fetch(record):
     # insert the sentence and get its id
-    sentence_id = InsertFunction(sentence=record["sentence"], token_count=record["token_count"]).insert_sentence()
-    sentence_insert = dict(cur.execute("SELECT id, sentence FROM sentences WHERE id = ?", (sentence_id,)).fetchone())
+    sentence_id = InsertFunction(
+        sentence=record["sentence"], token_count=record["token_count"]
+    ).insert_sentence()
+    sentence_insert = dict(
+        cur.execute("SELECT id, sentence FROM sentences WHERE id = ?", (sentence_id,)).fetchone()
+    )
 
     # token label
     tokens = record["tokens"]
@@ -151,7 +157,6 @@ def save_and_fetch(record):
     recent_inserts = []
 
     for token in tokens:
-        
         # get word id with word and lemma with insert_word function
         word_id = InsertFunction(word=token["text"], lemma=token["lemma"]).insert_word()
 
@@ -161,11 +166,9 @@ def save_and_fetch(record):
         current_token = dict(
             cur.execute("SELECT * FROM words WHERE id = ?", (word_id,)).fetchone()
         ) | dict(
-            cur.execute(
-                "SELECT token_count FROM sentences WHERE id = ?", (sentence_id,)
-            ).fetchone()
+            cur.execute("SELECT token_count FROM sentences WHERE id = ?", (sentence_id,)).fetchone()
         )
-        
+
         # insert current token into recent inserts list
         recent_inserts.append(dict(current_token))
 

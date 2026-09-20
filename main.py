@@ -5,6 +5,7 @@ from scoring.stat_scoring import stat_scoring
 from nlp.text_processor import process_text
 from translation.translate import translate_record
 
+
 def main(recording, input_type):
     # transcribe audio and get result
     text = recording if input_type == "text" else transcribe_audio(recording)

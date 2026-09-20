@@ -39,5 +39,5 @@ def stat_scoring(table):
         specificity_score = spec_score(word_id, session_count, token_count)
 
         push_statistical_score(word_id, frequency_score, specificity_score)
-        
+
     return 0
