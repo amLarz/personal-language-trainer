@@ -1,5 +1,5 @@
 from translation.google_translate import translate
-from data.db import insert_sentence_translation, insert_word_translation, FetchFromDB
+from data.db import InsertFunction, FetchFromDB
 # TODO ^^^ TURN TO CLASS
 from pypinyin import pinyin as pinyin, Style
 
@@ -8,11 +8,11 @@ PY_PINYIN_DEFAULT_HETERONYM = False  # TODO: HARDCODED CHANGE IN FUTURE
 
 def translate_record(sentence, words):
     translation = translate(sentence["sentence"])
-    insert_sentence_translation(sentence["sentence"], translation)
+    InsertFunction(sentence["sentence"], sentence["token_count"]).insert_sentence_translation()
     
     for word in words:
         translation = translate(word["word"])
-        insert_word_translation(word["word"], translation)
+        InsertFunction(word["word"], translation).insert_word_translation()
         pinyin = pinyin(translation, style=PY_PINYIN_DEFAULT_STYLE, heteronym=PY_PINYIN_DEFAULT_HETERONYM)
         print(pinyin)  # DELETE THIS
         
