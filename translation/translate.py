@@ -1,13 +1,11 @@
 from translation.google_translate import translate
 from data.db import InsertFunction, FetchFromDB
-
-# TODO ^^^ TURN TO CLASS
 from pypinyin import pinyin as pinyin, Style
 
 PY_PINYIN_DEFAULT_STYLE = Style.TONE  # TODO: HARDCODED CHANGE IN FUTURE
 PY_PINYIN_DEFAULT_HETERONYM = False  # TODO: HARDCODED CHANGE IN FUTURE
 
-
+#TODO: fix pinyin function
 def translate_record(sentence, words):
     translation = translate(sentence["sentence"])
     InsertFunction(sentence["sentence"], sentence["token_count"]).insert_sentence_translation()
