@@ -47,7 +47,7 @@ con.commit()
 # INSERT FUNCTIONS
 class InsertFunction:
     def __init__(
-        self, word=None, lemma=None, sentence=None, token_count=None, word_id=None, sentence_id=None
+        self, word=None, lemma=None, sentence=None, token_count=None, word_id=None, sentence_id=None, hanzi=None, pinyin=None
     ):
         self.word = word
         self.lemma = lemma
@@ -55,8 +55,8 @@ class InsertFunction:
         self.token_count = token_count
         self.word_id = word_id
         self.sentence_id = sentence_id
-        # self.hanzi = hanzi # TODO: for translation
-        # self.pinyin = pinyin # TODO: for translation
+        self.hanzi = hanzi
+        self.pinyin = pinyin
 
     def insert_word(self):
         cur.execute(
@@ -89,6 +89,22 @@ class InsertFunction:
         cur.execute(
             "UPDATE sentences SET hanzi = ? WHERE sentence = ?", (self.hanzi, self.sentence)
         )  # TODO: fishy
+
+        con.commit()
+        return 0
+    
+    def insert_word_pinyin(self):
+        cur.execute(
+            "UPDATE words SET pinyin = ? WHERE word = ?", (self.pinyin, self.word)
+        )
+
+        con.commit()
+        return 0
+    
+    def insert_sentence_pinyin(self):
+        cur.execute(
+            "UPDATE sentences SET pinyin = ? WHERE sentence = ?", (self.pinyin, self.sentence)
+        )
 
         con.commit()
         return 0
