@@ -87,7 +87,7 @@ class InsertFunction:
     
     def word_sentence_link(self):
         cur.execute(
-            "INSERT INTO words_sentences_links (word_id, sentence_id) VALUES (?, ?) ON CONFLICT(word_id, sentence_id) DO NOTHING",
+            "INSERT OR IGNORE INTO words_sentences_links (word_id, sentence_id) VALUES (?, ?)",
             (self.word_id, self.sentence_id),
         )
 
