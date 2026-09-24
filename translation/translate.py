@@ -1,6 +1,6 @@
 from translation.google_translate import translate
 from data.db import InsertFunction, FetchFromDB
-from pypinyin import pinyin as get_pinyin, lazy_pinyin, Style
+from pypinyin import lazy_pinyin, Style
 
 PY_PINYIN_DEFAULT_STYLE = Style.TONE  # TODO: HARDCODE
 

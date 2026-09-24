@@ -65,7 +65,10 @@ class InsertFunction:
         self.sentence_id = sentence_id
         self.hanzi = hanzi
         self.pinyin = pinyin
-
+        
+    def inserts(self):
+        return
+        
     def insert_word(self):
         cur.execute(
             "INSERT INTO words (word, lemma, total_count) VALUES (?, ?, 1) ON CONFLICT(word) DO UPDATE SET total_count = total_count + 1 RETURNING id",
