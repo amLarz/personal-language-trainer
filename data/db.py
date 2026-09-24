@@ -32,7 +32,7 @@ cur.execute("""CREATE TABLE IF NOT EXISTS words_sentences_links (
     word_id INTEGER NOT NULL,
     sentence_id INTEGER NOT NULL,
     FOREIGN KEY (word_id) REFERENCES words(id),
-    FOREIGN KEY (sentence_id) REFERENCES sentences(id)
+    FOREIGN KEY (sentence_id) REFERENCES sentences(id),
     PRIMARY KEY (word_id, sentence_id)
 )""")
 
@@ -84,7 +84,16 @@ class InsertFunction:
 
         # return the inserted sentence
         return cur.lastrowid
+    
+    def word_sentence_link(self):
+        cur.execute(
+            "INSERT INTO words_sentences_links (word_id, sentence_id) VALUES (?, ?) ON CONFLICT(word_id, sentence_id) DO NOTHING",
+            (self.word_id, self.sentence_id),
+        )
 
+        con.commit()
+        return 0
+    
     def insert_word_hanzi(self):
         cur.execute(
             "UPDATE words SET hanzi = ? WHERE word = ?", (self.hanzi, self.word)
@@ -114,16 +123,6 @@ class InsertFunction:
 
         con.commit()
         return 0
-
-    def word_sentence_link(self):
-        cur.execute(
-            "INSERT OR IGNORE INTO words_sentences_links (word_id, sentence_id) VALUES (?, ?)",
-            (self.word_id, self.sentence_id),
-        )
-
-        con.commit()
-        return 0
-
 
 # Scoring functions
 # TODO: there has to be a way to fetch the specficic score from one function
