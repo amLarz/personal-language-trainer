@@ -45,6 +45,7 @@ con.commit()
 
 
 # INSERT FUNCTIONS
+    
 class InsertFunction:
     def __init__(
         self,
@@ -66,8 +67,21 @@ class InsertFunction:
         self.hanzi = hanzi
         self.pinyin = pinyin
         
+    def clean_inputs(self): # TODO: filters null values and returns a dictionary of the remaining key-value pairs
+        return {k: v for k, v in vars(self).items() if v is not None}
+
     def inserts(self):
-        return
+        
+        input = self.clean_inputs() # NOTE retuns a dictionary of the remaining key-value pairs
+        
+        if len(input) == 2:
+            # TODO look up insert_word, insert_sentence and word_sentence_link
+            return
+        
+        # TODO look up all updates
+        
+        
+        return 
         
     def insert_word(self):
         cur.execute(
