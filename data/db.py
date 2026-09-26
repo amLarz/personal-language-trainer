@@ -66,20 +66,31 @@ class InsertFunction:
         self.sentence_id = sentence_id
         self.hanzi = hanzi
         self.pinyin = pinyin
-        
-    def clean_inputs(self): # TODO: filters null values and returns a dictionary of the remaining key-value pairs
-        return {k: v for k, v in vars(self).items() if v is not None}
 
     def inserts(self):
         
-        input = self.clean_inputs() # NOTE retuns a dictionary of the remaining key-value pairs
+        input = {k: v for k, v in vars(self).items() if v is not None} # NOTE retuns a dictionary of the remaining key-value pairs
         
         if len(input) == 2:
             # TODO look up insert_word, insert_sentence and word_sentence_link
             return
+
         
-        # TODO look up all updates
+        # TODO look up all update
         
+        header_table = {
+            "word" : "words",
+            "sentence" : "sentences",
+            "hanzi" : "words",
+            "hanzi" : "sentences",
+            "pinyin" : "words",
+            "pinyin" : "sentences",
+        }
+        # if sentence is in table then it changes sentence col in sentences table.
+        if "sentence" in input:
+            query_affect = {}    
+            
+        query = f"UPDATE {header_table['sentence']} SET sentence = ? WHERE sentence = ?"
         
         return 
         
