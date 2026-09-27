@@ -7,6 +7,26 @@ cur = con.cursor()
 cur.execute("PRAGMA foreign_keys = ON")
 
 # WORDS TABLE
+def create_tables():
+    
+    words_table_cols = {
+        "id": "INTEGER PRIMARY KEY",
+        "hanzi": "TEXT",
+        "pinyin": "TEXT",
+        "word": "TEXT NOT NULL UNIQUE",
+        "lemma": "TEXT NOT NULL",
+        "frequency_score": "INTEGER DEFAULT 0",
+        "specificity_score": "INTEGER DEFAULT 0",
+        "total_count": "INTEGER DEFAULT 0",
+    }
+    
+    query = f"CREATE TABLE IF NOT EXISTS words ({f'{col}, {config},' for col, config in words_table_cols.items()})"
+    
+    cur.execute("""CREATE TABLE IF NOT EXISTS (
+        
+    )""")
+    
+    return
 cur.execute("""CREATE TABLE IF NOT EXISTS words (
     id INTEGER PRIMARY KEY,
     hanzi TEXT,
@@ -79,18 +99,15 @@ class InsertFunction:
         # TODO look up all update
         
         header_table = {
-            "word" : "words",
-            "sentence" : "sentences",
-            "hanzi" : "words",
-            "hanzi" : "sentences",
-            "pinyin" : "words",
-            "pinyin" : "sentences",
+            # TODO: NEEDS THE TABLES LABEL GETTER FUNCTIONj
         }
         # if sentence is in table then it changes sentence col in sentences table.
-        if "sentence" in input:
-            query_affect = {}    
-            
-        query = f"UPDATE {header_table['sentence']} SET sentence = ? WHERE sentence = ?"
+        for key in input:
+            if key in header_table:
+                # TODO: query = f"UPDATE {header_table[key]} SET {} = ? WHERE {key} = ?"
+                cur.execute(query, (input[key], input[key]))
+                con.commit()
+                return
         
         return 
         
