@@ -20,7 +20,7 @@ def create_tables():
         "total_count": "INTEGER DEFAULT 0",
     }
     
-    query = f"CREATE TABLE IF NOT EXISTS words ({f'{col}, {config},' for col, config in words_table_cols.items()})"
+    query = f"CREATE TABLE IF NOT EXISTS words (f'{col for col, config in words_table_cols.items()})"
     
     cur.execute("""CREATE TABLE IF NOT EXISTS (
         
