@@ -22,4 +22,19 @@ class ActionRefactorTest:
         return values
 
 
-ActionRefactorTest(name="Alice", age=30).clean_inputs()
+#ActionRefactorTest(name="Alice", age=30).clean_inputs()
+
+
+words_table_cols = {
+    "id": "INTEGER PRIMARY KEY",
+    "hanzi": "TEXT",
+    "pinyin": "TEXT",
+    "word": "TEXT NOT NULL UNIQUE",
+    "lemma": "TEXT NOT NULL",
+    "frequency_score": "INTEGER DEFAULT 0",
+    "specificity_score": "INTEGER DEFAULT 0",
+    "total_count": "INTEGER DEFAULT 0",
+}
+col_headers = ", ".join(f"{col} {config}" for col, config in words_table_cols.items())
+
+print(col_headers)

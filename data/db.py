@@ -9,7 +9,7 @@ cur.execute("PRAGMA foreign_keys = ON")
 # WORDS TABLE
 def create_tables():
     
-    words_table_cols = {
+    words_table = {
         "id": "INTEGER PRIMARY KEY",
         "hanzi": "TEXT",
         "pinyin": "TEXT",
@@ -20,41 +20,35 @@ def create_tables():
         "total_count": "INTEGER DEFAULT 0",
     }
     
-    query = f"CREATE TABLE IF NOT EXISTS words (f'{col for col, config in words_table_cols.items()})"
-    
-    cur.execute("""CREATE TABLE IF NOT EXISTS (
+    sentences_table = {
+        "id": "INTEGER PRIMARY KEY",
+        "hanzi": "TEXT",
+        "pinyin": "TEXT",
+        "sentence": "TEXT NOT NULL",
+        "token_count": "INTEGER DEFAULT 0",
+    }    
         
-    )""")
+    words_sentences_links_table = {
+        "word_id": "INTEGER NOT NULL",
+        "sentence_id": "INTEGER NOT NULL",
+        "FOREIGN KEY (word_id)": "REFERENCES words(id)",
+        "FOREIGN KEY (sentence_id)": "REFERENCES sentences(id)",
+        "PRIMARY KEY": "(word_id, sentence_id)"
+    }
     
+    header = {
+        "words": words_table,
+        "sentences": sentences_table,
+        "words_sentences_links": words_sentences_links_table
+    }
+    
+    for table_name, table in header.items():
+        col_headers = ", ".join(f"{col} {config}" for col, config in table.items())
+        query = f"CREATE TABLE IF NOT EXISTS {table_name} ({col_headers})"
+        cur.execute(query)
+
     return
-cur.execute("""CREATE TABLE IF NOT EXISTS words (
-    id INTEGER PRIMARY KEY,
-    hanzi TEXT,
-    pinyin TEXT,
-    word TEXT NOT NULL UNIQUE,
-    lemma TEXT NOT NULL,
-    frequency_score INTEGER DEFAULT 0,
-    specificity_score INTEGER DEFAULT 0,
-    total_count INTEGER DEFAULT 0
-)""")
-
-# SENTENCES TABLE
-cur.execute("""CREATE TABLE IF NOT EXISTS sentences (
-    id INTEGER PRIMARY KEY,
-    hanzi TEXT,
-    pinyin TEXT,
-    sentence TEXT NOT NULL,
-    token_count INTEGER DEFAULT 0
-)""")
-
-# WORDS_SENTENCES_LINKS TABLE
-cur.execute("""CREATE TABLE IF NOT EXISTS words_sentences_links (
-    word_id INTEGER NOT NULL,
-    sentence_id INTEGER NOT NULL,
-    FOREIGN KEY (word_id) REFERENCES words(id),
-    FOREIGN KEY (sentence_id) REFERENCES sentences(id),
-    PRIMARY KEY (word_id, sentence_id)
-)""")
+create_tables() # CREATE TABLES NOTE: TEMP
 
 # TABLE VIEWS
 # table view for id, word and scores only
