@@ -6,9 +6,10 @@ con.row_factory = sqlite3.Row
 cur = con.cursor()
 cur.execute("PRAGMA foreign_keys = ON")
 
+
 # WORDS TABLE
 def create_tables():
-    
+
     words_table = {
         "id": "INTEGER PRIMARY KEY",
         "hanzi": "TEXT",
@@ -19,47 +20,46 @@ def create_tables():
         "specificity_score": "INTEGER DEFAULT 0",
         "total_count": "INTEGER DEFAULT 0",
     }
-    
+
     sentences_table = {
         "id": "INTEGER PRIMARY KEY",
         "hanzi": "TEXT",
         "pinyin": "TEXT",
         "sentence": "TEXT NOT NULL",
         "token_count": "INTEGER DEFAULT 0",
-    }    
-        
+    }
+
     words_sentences_links_table = {
         "word_id": "INTEGER NOT NULL",
         "sentence_id": "INTEGER NOT NULL",
         "FOREIGN KEY (word_id)": "REFERENCES words(id)",
         "FOREIGN KEY (sentence_id)": "REFERENCES sentences(id)",
-        "PRIMARY KEY": "(word_id, sentence_id)"
+        "PRIMARY KEY": "(word_id, sentence_id)",
     }
-    
+
     header = {
         "words": words_table,
         "sentences": sentences_table,
-        "words_sentences_links": words_sentences_links_table
+        "words_sentences_links": words_sentences_links_table,
     }
-    
+
+    # creating each table
     for table_name, table in header.items():
         col_headers = ", ".join(f"{col} {config}" for col, config in table.items())
         query = f"CREATE TABLE IF NOT EXISTS {table_name} ({col_headers})"
         cur.execute(query)
 
+    con.commit()
+
     return
-create_tables() # CREATE TABLES NOTE: TEMP
 
-# TABLE VIEWS
-# table view for id, word and scores only
-cur.execute("""CREATE VIEW IF NOT EXISTS essentials AS
-            SELECT id, word FROM words""")
 
-con.commit()
+create_tables()  # CREATE TABLES NOTE: TEMP
 
 
 # INSERT FUNCTIONS
-    
+
+
 class InsertFunction:
     def __init__(
         self,
@@ -82,29 +82,26 @@ class InsertFunction:
         self.pinyin = pinyin
 
     def inserts(self):
-        
-        input = {k: v for k, v in vars(self).items() if v is not None} # NOTE retuns a dictionary of the remaining key-value pairs
-        
+
+        input = {
+            k: v for k, v in vars(self).items() if v is not None
+        }  # NOTE retuns a dictionary of the remaining key-value pairs
+
         if len(input) == 2:
             # TODO look up insert_word, insert_sentence and word_sentence_link
             return
 
-        
         # TODO look up all update
-        
+
         header_table = {
-            # TODO: NEEDS THE TABLES LABEL GETTER FUNCTIONj
+            # TODO: NEEDS THE TABLES LABEL GETTER FUNCTION
         }
         # if sentence is in table then it changes sentence col in sentences table.
         for key in input:
             if key in header_table:
                 # TODO: query = f"UPDATE {header_table[key]} SET {} = ? WHERE {key} = ?"
-                cur.execute(query, (input[key], input[key]))
-                con.commit()
-                return
-        
-        return 
-        
+                pass
+
     def insert_word(self):
         cur.execute(
             "INSERT INTO words (word, lemma, total_count) VALUES (?, ?, 1) ON CONFLICT(word) DO UPDATE SET total_count = total_count + 1 RETURNING id",
@@ -123,7 +120,7 @@ class InsertFunction:
 
         # return the inserted sentence
         return cur.lastrowid
-    
+
     def word_sentence_link(self):
         cur.execute(
             "INSERT OR IGNORE INTO words_sentences_links (word_id, sentence_id) VALUES (?, ?)",
@@ -132,7 +129,7 @@ class InsertFunction:
 
         con.commit()
         return 0
-    
+
     def insert_word_hanzi(self):
         cur.execute(
             "UPDATE words SET hanzi = ? WHERE word = ?", (self.hanzi, self.word)
@@ -162,6 +159,7 @@ class InsertFunction:
 
         con.commit()
         return 0
+
 
 # Scoring functions
 # TODO: there has to be a way to fetch the specficic score from one function

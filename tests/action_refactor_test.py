@@ -22,7 +22,7 @@ class ActionRefactorTest:
         return values
 
 
-#ActionRefactorTest(name="Alice", age=30).clean_inputs()
+# ActionRefactorTest(name="Alice", age=30).clean_inputs()
 
 
 words_table_cols = {
