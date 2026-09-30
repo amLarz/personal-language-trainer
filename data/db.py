@@ -8,99 +8,106 @@ cur.execute("PRAGMA foreign_keys = ON")
 
 
 # WORDS TABLE
-def create_tables():
-
-    words_table = {
-        "id": "INTEGER PRIMARY KEY",
-        "hanzi": "TEXT",
-        "pinyin": "TEXT",
-        "word": "TEXT NOT NULL UNIQUE",
-        "lemma": "TEXT NOT NULL",
-        "frequency_score": "INTEGER DEFAULT 0",
-        "specificity_score": "INTEGER DEFAULT 0",
-        "total_count": "INTEGER DEFAULT 0",
+class Tables:     
+    SCHEMAS = {
+        "words_table": {
+            "id": "INTEGER PRIMARY KEY",
+            "hanzi": "TEXT",
+            "pinyin": "TEXT",
+            "word": "TEXT NOT NULL UNIQUE",
+            "lemma": "TEXT NOT NULL",
+            "frequency_score": "INTEGER DEFAULT 0",
+            "specificity_score": "INTEGER DEFAULT 0",
+            "total_count": "INTEGER DEFAULT 0",
+        },
+        "sentences_table": {
+            "id": "INTEGER PRIMARY KEY",
+            "hanzi": "TEXT",
+            "pinyin": "TEXT",
+            "sentence": "TEXT NOT NULL",
+            "token_count": "INTEGER DEFAULT 0",
+        },
+        "words_sentences_links_table": {
+            "word_id": "INTEGER NOT NULL",
+            "sentence_id": "INTEGER NOT NULL",
+            "FOREIGN KEY (word_id)": "REFERENCES words(id)",
+            "FOREIGN KEY (sentence_id)": "REFERENCES sentences(id)",
+            "PRIMARY KEY": "(word_id, sentence_id)",
+        }
     }
+    @classmethod #TODO: Research on this
+    def create_tables(cls):
+        # creating each table
+        for table_name, table in cls.SCHEMAS.items():
+            col_headers = ", ".join(f"{col} {config}" for col, config in table.items())
+            query = f"CREATE TABLE IF NOT EXISTS {table_name} ({col_headers})"
+            print(f"query: {query}") # NOTE DELETE THIS
+            cur.execute(query)
+        con.commit()
+        
+    @classmethod 
+    def get_col_info(cls, table_name):
+        if table_name not in cls.SCHEMAS:
+            return []
 
-    sentences_table = {
-        "id": "INTEGER PRIMARY KEY",
-        "hanzi": "TEXT",
-        "pinyin": "TEXT",
-        "sentence": "TEXT NOT NULL",
-        "token_count": "INTEGER DEFAULT 0",
-    }
+        return [col for col in cls.SCHEMAS[table_name].keys() if col not in ["PRIMARY KEY", "FOREIGN KEY"]]
+    
 
-    words_sentences_links_table = {
-        "word_id": "INTEGER NOT NULL",
-        "sentence_id": "INTEGER NOT NULL",
-        "FOREIGN KEY (word_id)": "REFERENCES words(id)",
-        "FOREIGN KEY (sentence_id)": "REFERENCES sentences(id)",
-        "PRIMARY KEY": "(word_id, sentence_id)",
-    }
-
-    header = {
-        "words": words_table,
-        "sentences": sentences_table,
-        "words_sentences_links": words_sentences_links_table,
-    }
-
-    # creating each table
-    for table_name, table in header.items():
-        col_headers = ", ".join(f"{col} {config}" for col, config in table.items())
-        query = f"CREATE TABLE IF NOT EXISTS {table_name} ({col_headers})"
-        cur.execute(query)
-
-    con.commit()
-
-    return
-
-
-create_tables()  # CREATE TABLES NOTE: TEMP
-
-
+Tables.create_tables()  # CREATE TABLES NOTE: TEMP
 # INSERT FUNCTIONS
 
 
-class InsertFunction:
-    def __init__(
-        self,
-        word=None,
-        lemma=None,
-        sentence=None,
-        token_count=None,
-        word_id=None,
-        sentence_id=None,
-        hanzi=None,
-        pinyin=None,
-    ):
-        self.word = word
-        self.lemma = lemma
-        self.sentence = sentence
-        self.token_count = token_count
-        self.word_id = word_id
-        self.sentence_id = sentence_id
-        self.hanzi = hanzi
-        self.pinyin = pinyin
+class InsertFunction: # NOTE: kwargs might break callouts
+    def __init__(self, **kwargs):
+        self.word = kwargs.get("word")
+        self.lemma = kwargs.get("lemma")
+        self.sentence = kwargs.get("sentence")
+        self.token_count = kwargs.get("token_count")
+        self.word_id = kwargs.get("word_id")
+        self.sentence_id = kwargs.get("sentence_id")
+        self.hanzi = kwargs.get("hanzi")
+        self.pinyin = kwargs.get("pinyin")
 
     def inserts(self):
 
         input = {
             k: v for k, v in vars(self).items() if v is not None
         }  # NOTE retuns a dictionary of the remaining key-value pairs
+        
+        if not input:
+            return 0
 
-        if len(input) == 2:
-            # TODO look up insert_word, insert_sentence and word_sentence_link
-            return
-
-        # TODO look up all update
-
-        header_table = {
-            # TODO: NEEDS THE TABLES LABEL GETTER FUNCTION
-        }
-        # if sentence is in table then it changes sentence col in sentences table.
-        for key in input:
-            if key in header_table:
-                # TODO: query = f"UPDATE {header_table[key]} SET {} = ? WHERE {key} = ?"
-                pass
+        target_table = None
+        for table_name in Tables.SCHEMAS.items(): # NOTE check on this too
+            
+            if "word" in input and table_name == "words_table":
+                target_table = table_name
+                break
+            
+            elif "sentence" in input and table_name == "sentences_table":
+                target_table = table_name
+                break
+            elif "word_id" in input and "sentence_id" in input and table_name == "words_sentences_links_table":
+                target_table = table_name
+                break
+            
+        if not target_table:
+            return 100  # NOTE 100 is error code for no table found
+        
+        table_col = Tables.get_col_info(target_table)
+        db_payload = {k: v for k, v in input.items() if k in table_col}
+        
+        # NOTE STUDY THIS
+        cols = ", ".join(db_payload.keys())
+        placeholders = ", ".join("?" for _ in db_payload)
+        query = f"INSERT INTO {target_table} ({cols}) VALUES ({placeholders})"
+        
+        print(f"query: {query}")  # NOTE DELETE THIS
+        print(f"db_payload {db_payload}")  # NOTE DELETE THIS
+        cur.execute(query, db_payload)
+        con.commit()
+        
+        return "Inserted into {target_table} with payload: {db_payload}"
 
     def insert_word(self):
         cur.execute(
