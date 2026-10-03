@@ -35,12 +35,12 @@ class Tables:
             "PRIMARY KEY": "(word_id, sentence_id)",
         }
     }
-    @classmethod #TODO: Research on this
+    @classmethod
     def create_tables(cls):
-        # creating each table
+        # creating each table with design specificiations
         for table_name, table in cls.SCHEMAS.items():
-            col_headers = ", ".join(f"{col} {config}" for col, config in table.items())
-            query = f"CREATE TABLE IF NOT EXISTS {table_name} ({col_headers})"
+            col_headers = ", \n\t".join(f"{col} {config}" for col, config in table.items())
+            query = f"CREATE TABLE IF NOT EXISTS {table_name} (\n\t{col_headers} \n)"
             print(f"query: {query}") # NOTE DELETE THIS
             cur.execute(query)
         con.commit()
@@ -53,8 +53,8 @@ class Tables:
         return [col for col in cls.SCHEMAS[table_name].keys() if col not in ["PRIMARY KEY", "FOREIGN KEY"]]
     
 
-Tables.create_tables()  # CREATE TABLES NOTE: TEMP
 # INSERT FUNCTIONS
+
 
 
 class InsertFunction: # NOTE: kwargs might break callouts
@@ -68,14 +68,14 @@ class InsertFunction: # NOTE: kwargs might break callouts
         self.hanzi = kwargs.get("hanzi")
         self.pinyin = kwargs.get("pinyin")
 
-    def inserts(self):
+    def insert(self):
 
         input = {
             k: v for k, v in vars(self).items() if v is not None
         }  # NOTE retuns a dictionary of the remaining key-value pairs
         
         if not input:
-            return 0
+            return 101 # no input found
 
         target_table = None
         for table_name in Tables.SCHEMAS.items(): # NOTE check on this too
@@ -211,9 +211,9 @@ def save_and_fetch(record):
     # insert the sentence and get its id
     sentence_id = InsertFunction(
         sentence=record["sentence"], token_count=record["token_count"]
-    ).insert_sentence()
+    ).insert()
     sentence_insert = dict(
-        cur.execute("SELECT id, sentence FROM sentences WHERE id = ?", (sentence_id,)).fetchone()
+        cur.execute("SELECT id, sentence FROM sentences_table WHERE id = ?", (sentence_id,)).fetchone() # NOTE NOTE TEMP
     )
 
     # token label
@@ -226,7 +226,7 @@ def save_and_fetch(record):
         word_id = InsertFunction(word=token["text"], lemma=token["lemma"]).insert_word()
 
         # link the word and sentence
-        InsertFunction(word_id, sentence_id).word_sentence_link()
+        InsertFunction(word_id=word_id, sentence_id=sentence_id).word_sentence_link()
         # select the current token's word and id
         current_token = dict(
             cur.execute("SELECT * FROM words WHERE id = ?", (word_id,)).fetchone()
@@ -254,3 +254,5 @@ def save_and_fetch(record):
     con.commit()
 
     return sentence_insert, word_inserts  # returns a list of dictionaries
+
+Tables.create_tables()  # NOTE: TEMP

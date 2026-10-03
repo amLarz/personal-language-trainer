@@ -8,7 +8,7 @@ PY_PINYIN_DEFAULT_STYLE = Style.TONE  # TODO: HARDCODE
 # TODO: fix pinyin function
 def translate_record(sentence, words):
     hanzi_translation = translate(sentence["sentence"])
-    InsertFunction(sentence=sentence["sentence"], hanzi=hanzi_translation).insert_sentence_hanzi()
+    InsertFunction(sentence=sentence["sentence"], hanzi=hanzi_translation).insert()
 
     get_sentence_pinyin = " ".join(
         lazy_pinyin(
@@ -20,11 +20,11 @@ def translate_record(sentence, words):
     print(get_sentence_pinyin)  # DELETE THIS
     InsertFunction(
         sentence=sentence["sentence"], pinyin=get_sentence_pinyin
-    ).insert_sentence_pinyin()
+    ).insert()
 
     for word in words:
         hanzi_translation = translate(word["word"])
-        InsertFunction(word=word["word"], hanzi=hanzi_translation).insert_word_hanzi()
+        InsertFunction(word=word["word"], hanzi=hanzi_translation).insert()
 
         get_word_pinyin = " ".join(
             lazy_pinyin(
@@ -32,7 +32,7 @@ def translate_record(sentence, words):
                 style=PY_PINYIN_DEFAULT_STYLE,
             )
         )
-        InsertFunction(word=word["word"], pinyin=get_word_pinyin).insert_word_pinyin()
+        InsertFunction(word=word["word"], pinyin=get_word_pinyin).insert()
         print(get_word_pinyin)  # DELETE THIS
 
     print(f"sentence translation inserted: {translate(sentence['sentence'])}")  # DELETE THIS
