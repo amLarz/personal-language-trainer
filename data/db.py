@@ -10,7 +10,7 @@ cur.execute("PRAGMA foreign_keys = ON")
 # WORDS TABLE
 class Tables:     
     SCHEMAS = {
-        "words_table": {
+        "words": {
             "id": "INTEGER PRIMARY KEY",
             "hanzi": "TEXT",
             "pinyin": "TEXT",
@@ -20,14 +20,14 @@ class Tables:
             "specificity_score": "INTEGER DEFAULT 0",
             "total_count": "INTEGER DEFAULT 0",
         },
-        "sentences_table": {
+        "sentences": {
             "id": "INTEGER PRIMARY KEY",
             "hanzi": "TEXT",
             "pinyin": "TEXT",
             "sentence": "TEXT NOT NULL",
             "token_count": "INTEGER DEFAULT 0",
         },
-        "words_sentences_links_table": {
+        "words_sentences_links": {
             "word_id": "INTEGER NOT NULL",
             "sentence_id": "INTEGER NOT NULL",
             "FOREIGN KEY (word_id)": "REFERENCES words(id)",
@@ -213,7 +213,7 @@ def save_and_fetch(record):
         sentence=record["sentence"], token_count=record["token_count"]
     ).insert()
     sentence_insert = dict(
-        cur.execute("SELECT id, sentence FROM sentences_table WHERE id = ?", (sentence_id,)).fetchone() # NOTE NOTE TEMP
+        cur.execute("SELECT id, sentence FROM sentences WHERE id = ?", (sentence_id,)).fetchone() # NOTE NOTE TEMP
     )
 
     # token label
