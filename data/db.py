@@ -81,14 +81,14 @@ class InsertFunction: # NOTE: kwargs might break callouts
         target_table = None
         for table_name in Tables.SCHEMAS.items(): # NOTE check on this too
             
-            if "word" in input and table_name == "words_table":
+            if "word" in input:
                 target_table = table_name
                 break
             
-            elif "sentence" in input and table_name == "sentences_table":
+            elif "sentence" in input:
                 target_table = table_name
                 break
-            elif "word_id" in input and "sentence_id" in input and table_name == "words_sentences_links_table":
+            elif "word_id" in input and "sentence_id" in input:
                 target_table = table_name
                 break
             
