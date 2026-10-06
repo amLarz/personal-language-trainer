@@ -35,6 +35,7 @@ class Tables:
             "PRIMARY KEY": "(word_id, sentence_id)",
         }
     }
+    
     @classmethod
     def create_tables(cls):
         # creating each table with design specificiations
