@@ -74,30 +74,37 @@ class InsertFunction: # NOTE: kwargs might break callouts
         input = {
             k: v for k, v in vars(self).items() if v is not None
         }  # NOTE retuns a dictionary of the remaining key-value pairs
-        
+
+        print(f"input: {input}")  # NOTE DELETE THIS
+
         if not input:
             return 101 # no input found
 
         target_table = None
         for table_name in Tables.SCHEMAS.keys(): # NOTE check on this too
-            
-            if "word" in input:
+            # NOTE: CHANGE, TOOK OUT BREAK MAY HAVE CONSEQUENCES
+            if "word" in input.keys():
                 target_table = table_name
                 break
             
-            elif "sentence" in input:
+            if "sentence" in input.keys():
                 target_table = table_name
                 break
-            elif "word_id" in input and "sentence_id" in input:
+                
+            if "word_id" in input.keys() and "sentence_id" in input.keys():
                 target_table = table_name
                 break
+                
+
+        print(f"\ntarget_tableeee: {target_table}\n")  # NOTE DELETE THIS
         
         if not target_table:
             return 100  # NOTE 100 is error code for no table found
 
         table_col = Tables.get_col_info(target_table)
+        print(f"table_col: {table_col}")  # NOTE DELETE THIS
         db_payload = {k: v for k, v in input.items() if k in table_col}
-        
+
         # NOTE STUDY THIS
         cols = ", ".join(db_payload.keys())
         placeholders = ", ".join("?" for _ in db_payload)
@@ -105,7 +112,7 @@ class InsertFunction: # NOTE: kwargs might break callouts
         
         print(f"query: {query}")  # NOTE DELETE THIS
         print(f"db_payload {db_payload}")  # NOTE DELETE THIS
-        cur.execute(query, db_payload)
+        cur.execute(f" {query}", db_payload.values())
         con.commit()
         
         return "Inserted into {target_table} with payload: {db_payload}"
