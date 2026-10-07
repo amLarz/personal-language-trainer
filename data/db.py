@@ -79,7 +79,7 @@ class InsertFunction: # NOTE: kwargs might break callouts
             return 101 # no input found
 
         target_table = None
-        for table_name in Tables.SCHEMAS.items(): # NOTE check on this too
+        for table_name in Tables.SCHEMAS.keys(): # NOTE check on this too
             
             if "word" in input:
                 target_table = table_name
@@ -91,10 +91,10 @@ class InsertFunction: # NOTE: kwargs might break callouts
             elif "word_id" in input and "sentence_id" in input:
                 target_table = table_name
                 break
-            
+        
         if not target_table:
             return 100  # NOTE 100 is error code for no table found
-        
+
         table_col = Tables.get_col_info(target_table)
         db_payload = {k: v for k, v in input.items() if k in table_col}
         
