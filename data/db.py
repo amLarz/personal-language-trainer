@@ -82,6 +82,7 @@ class InsertFunction: # NOTE: kwargs might break callouts
 
         target_table = None
         for table_name in Tables.SCHEMAS.keys(): # NOTE check on this too
+            print(f"\ntable_name: {table_name}\n")  # NOTE DELETE THIS
             # NOTE: CHANGE, TOOK OUT BREAK MAY HAVE CONSEQUENCES
             if "word" in input.keys():
                 target_table = table_name
