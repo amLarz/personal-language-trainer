@@ -78,22 +78,24 @@ class InsertFunction: # NOTE: kwargs might break callouts
         print(f"input: {input}")  # NOTE DELETE THIS
 
         if not input:
-            return 101 # no input found
+            return 101 # no input founds
 
         target_table = None
+        input_header = set(input.keys())
         for table_name in Tables.SCHEMAS.keys(): # NOTE check on this too
             print(f"\ntable_name: {table_name}\n")  # NOTE DELETE THIS
-            print(f"input.keys(): {input.keys()}\n")  # NOTE DELETE THIS
+            print(f"input header: {input_header}\n")  # NOTE DELETE THIS
             # NOTE: CHANGE, TOOK OUT BREAK MAY HAVE CONSEQUENCES
-            if "word" in input.keys():
+
+            if "word" in input_header:
                 target_table = table_name
                 break
             
-            if "sentence" in input.keys():
+            elif "sentence" in input_header:
                 target_table = table_name
                 break
                 
-            if "word_id" in input.keys() and "sentence_id" in input.keys():
+            elif "word_id" in input_header and "sentence_id" in input_header:
                 target_table = table_name
                 break
                 
