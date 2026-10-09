@@ -88,11 +88,11 @@ class InsertFunction: # NOTE: kwargs might break callouts
             print(f"input header: {input_header}\n")  # NOTE DELETE THIS
             print(f"tables shcema: {schema_header}\n")  # NOTE DELETE THIS
 
-            if "word" in input_header:
+            if table_name in input_header:
                 target_table = table_name
                 break
             
-            if "sentence" in input_header:
+            if table_name in input_header:
                 target_table = table_name
                 break
                 
