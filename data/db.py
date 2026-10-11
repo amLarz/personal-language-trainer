@@ -83,10 +83,12 @@ class InsertFunction: # NOTE: kwargs might break callouts
         target_table = None
         input_header = set(input.keys())
         schema_header = list(Tables.SCHEMAS.keys())
+        
         for table_name in schema_header: # NOTE check on this too
             print(f"\ntable_name: {table_name}\n")  # NOTE DELETE THIS
             print(f"input header: {input_header}\n")  # NOTE DELETE THIS
             print(f"tables shcema: {schema_header}\n")  # NOTE DELETE THIS
+            print(f"col info: {Tables.get_col_info(table_name)}\n")  # NOTE DELETE THIS
 
             if "word" in input_header:
                 target_table = table_name
