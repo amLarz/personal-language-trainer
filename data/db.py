@@ -88,6 +88,7 @@ class InsertFunction: # NOTE: kwargs might break callouts
         # NOTE: BUILDING THIS.
         for index in range(len(possible_inputs)):
             possible_inputs[index] = schema_header[index]
+            print(f"possible_inputs: {possible_inputs}")  # NOTE DELETE THIS
 
         
         for table_name in schema_header: # NOTE check on this too
