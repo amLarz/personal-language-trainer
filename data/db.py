@@ -56,8 +56,6 @@ class Tables:
 
 # INSERT FUNCTIONS
 
-
-
 class InsertFunction: # NOTE: kwargs might break callouts
     def __init__(self, **kwargs):
         self.word = kwargs.get("word")
