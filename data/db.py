@@ -24,7 +24,6 @@ class Tables:
         "specificity_score": "specificity_score",
     }
     
-    
     SCHEMAS = {
         "words": {
             "id": "INTEGER PRIMARY KEY",
