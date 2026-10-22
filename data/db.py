@@ -84,9 +84,6 @@ class InsertFunction: # NOTE: kwargs might break callouts
         schema_header = list(Tables.SCHEMAS.keys())
 
         # NOTE: BUILDING THIS.
-        for index in range(len(possible_inputs)):
-            possible_inputs[index] = schema_header[index]
-
         
         for table_name in schema_header: # NOTE check on this too
             print(f"\ntable_name: {table_name}\n")  # NOTE DELETE THIS
