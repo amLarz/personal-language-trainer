@@ -82,7 +82,7 @@ class InsertFunction: # NOTE: kwargs might break callouts
         input_header = set(input.keys())
         possible_inputs = {"word", "sentence", "word_id", "sentence_id"}
         schema_header = list(Tables.SCHEMAS.keys())
-
+        
         # NOTE: BUILDING THIS.
         
         for table_name in schema_header: # NOTE check on this too
