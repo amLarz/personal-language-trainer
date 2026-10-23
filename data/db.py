@@ -9,22 +9,6 @@ cur.execute("PRAGMA foreign_keys = ON")
 
 # WORDS TABLE
 class Tables:
-    DETAIL_TYPE = {
-        "id": "id",
-        "hanzi": "hanzi",
-        "pinyin": "pinyin",
-        "word": "word",
-        "sentence": "sentence",
-        "lemma": "lemma",
-        "word_id": "word_id",
-        "sentence_id": "sentence_id",
-        "token_count": "token_count",
-        "total_count": "total_count",
-        "frequency_score": "frequency_score",
-        "specificity_score": "specificity_score",
-    }
-    
-    
     SCHEMAS = {
         "words": {
             "id": "INTEGER PRIMARY KEY",
@@ -82,6 +66,9 @@ class InsertFunction: # NOTE: kwargs might break callouts
         self.sentence_id = kwargs.get("sentence_id")
         self.hanzi = kwargs.get("hanzi")
         self.pinyin = kwargs.get("pinyin")
+        
+    def adapter(self, obj):
+        pass
 
     def insert(self):
 
