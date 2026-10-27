@@ -77,10 +77,25 @@ class InsertFunction: # NOTE: kwargs might break callouts
         self.lemma = kwargs.get("lemma")
         self.sentence = kwargs.get("sentence")
         self.token_count = kwargs.get("token_count")
-        self.word_id = kwargs.get("word_id")
-        self.sentence_id = kwargs.get("sentence_id")
+        self.word_and_sentence_id = kwargs.get("word_and_sentence_id")
+        self.word_and_sentence_id = (kwargs.get("word_id"), kwargs.get("sentence_id"))
         self.hanzi = kwargs.get("hanzi")
         self.pinyin = kwargs.get("pinyin")
+
+    def adapter(self, input):
+        first_key = next(iter(input))
+
+        if len(first_key) == 1:
+            type = "word"
+
+        if len(first_key) > 1:
+            type = "sentence"
+
+        if isinstance(first_key, tuple):
+            type = "word_and_sentence"
+
+        # turn ids into tuple
+        #if 
 
     def insert(self):
 
@@ -101,7 +116,9 @@ class InsertFunction: # NOTE: kwargs might break callouts
         # NOTE: BUILDING THIS.
         
         for table_name in schema_header: # NOTE check on this too
+            print(f"table info: {Tables.get_col_info(table_name)}")  # NOTE DELETE THIS
             print(f"\ntable_name: {table_name}\n")  # NOTE DELETE THIS
+            print(f"INPUTS {input}\n")  # NOTE DELETE THIS
             print(f"input header: {input_header}\n")  # NOTE DELETE THIS
             print(f"tables shcema: {schema_header}\n")  # NOTE DELETE THIS
 
@@ -256,7 +273,7 @@ def save_and_fetch(record):
         word_id = InsertFunction(word=token["text"], lemma=token["lemma"]).insert_word()
 
         # link the word and sentence
-        InsertFunction(word_id=word_id, sentence_id=sentence_id).word_sentence_link()
+        InsertFunction(word_id=word_id, sentence_id=sentence_id).insert() # NOTE NOTE NOTE CHANGED HERE
         # select the current token's word and id
         current_token = dict(
             cur.execute("SELECT * FROM words WHERE id = ?", (word_id,)).fetchone()
