@@ -67,7 +67,6 @@ class Tables:
             return []
 
         return [col for col in cls.SCHEMAS[table_name].keys() if col not in ["PRIMARY KEY", "FOREIGN KEY"]]
-    
 
 # INSERT FUNCTIONS
 
@@ -77,12 +76,9 @@ class InsertFunction: # NOTE: kwargs might break callouts
         self.lemma = kwargs.get("lemma")
         self.sentence = kwargs.get("sentence")
         self.token_count = kwargs.get("token_count")
-        self.word_and_sentence_id = (kwargs.get("word_id"), kwargs.get("sentence_id"))
+        self.word_and_sentence_id = (kwargs.get("word_id"), kwargs.get("sentence_id")) if (kwargs.get("word_id") is not None) and (kwargs.get("sentence_id") is not None) else None
         self.hanzi = kwargs.get("hanzi")
         self.pinyin = kwargs.get("pinyin")
-        
-    def adapter(self, obj):
-        pass
 
     def adapter(self, input):
         first_key = next(iter(input))
@@ -275,7 +271,7 @@ def save_and_fetch(record):
         word_id = InsertFunction(word=token["text"], lemma=token["lemma"]).insert_word()
 
         # link the word and sentence
-        InsertFunction(word_id=word_id, sentence_id=sentence_id).insert() # NOTE NOTE NOTE CHANGED HERE
+        InsertFunction(word_id=word_id, sentence_id=sentence_id).insert_word_sentence_link()
         # select the current token's word and id
         current_token = dict(
             cur.execute("SELECT * FROM words WHERE id = ?", (word_id,)).fetchone()
