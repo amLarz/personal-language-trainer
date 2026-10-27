@@ -77,7 +77,6 @@ class InsertFunction: # NOTE: kwargs might break callouts
         self.lemma = kwargs.get("lemma")
         self.sentence = kwargs.get("sentence")
         self.token_count = kwargs.get("token_count")
-        self.word_and_sentence_id = kwargs.get("word_and_sentence_id")
         self.word_and_sentence_id = (kwargs.get("word_id"), kwargs.get("sentence_id"))
         self.hanzi = kwargs.get("hanzi")
         self.pinyin = kwargs.get("pinyin")
