@@ -9,8 +9,6 @@ cur.execute("PRAGMA foreign_keys = ON")
 
 # WORDS TABLE
 class Tables:
-<<<<<<< HEAD
-=======
     DETAIL_TYPE = {
         "id": "id",
         "hanzi": "hanzi",
@@ -26,7 +24,6 @@ class Tables:
         "specificity_score": "specificity_score",
     }
     
->>>>>>> f9b8aa4db53e1c083139e449e33d9cd4e19e897c
     SCHEMAS = {
         "words": {
             "id": "INTEGER PRIMARY KEY",
