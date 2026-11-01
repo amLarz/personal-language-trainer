@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Rough Notes/Change in determiner.md",
+                "file": "Rough Notes/RAKE.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Change in determiner"
+              "title": "RAKE"
             }
           }
         ]
@@ -188,12 +188,12 @@
   },
   "active": "8349401fb3893159",
   "lastOpenFiles": [
-    "Concepts/Linguodidactics.md",
+    "Rough Notes/The Big Three of Importance.md",
     "Rough Notes/Change in determiner.md",
+    "Concepts/Linguodidactics.md",
     "Rough Notes/QUESTIONS.md",
     "Rough Notes/YAKE.md",
     "Rough Notes/RAKE.md",
-    "Rough Notes/The Big Three of Importance.md",
     "TF-IDF.md",
     "Rough Notes",
     "Concepts"
