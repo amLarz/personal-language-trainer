@@ -66,6 +66,9 @@ class Tables:
         if table_name not in cls.SCHEMAS:
             return []
 
+        if table_name == None:
+            return [col for col in cls.SCHEMAS.keys() if col not in ["PRIMARY KEY", "FOREIGN KEY"]]
+
         return [col for col in cls.SCHEMAS[table_name].keys() if col not in ["PRIMARY KEY", "FOREIGN KEY"]]
 
 # INSERT FUNCTIONS
@@ -80,20 +83,29 @@ class InsertFunction: # NOTE: kwargs might break callouts
         self.hanzi = kwargs.get("hanzi")
         self.pinyin = kwargs.get("pinyin")
 
-    def adapter(self, input):
-        first_key = next(iter(input))
+    class Adapter:
+        def __init__(self, **kwargs):
+            self.input = kwargs.get("input")
+            self.table = kwargs.get("table")
+        
+        def input_adapter(self, input):
+            first_key = next(iter(input))
 
-        if len(first_key) == 1:
-            type = "word"
+            # type helps choose target for insertion
+            if len(first_key) == 1:
+                type = "word"
 
-        if len(first_key) > 1:
-            type = "sentence"
+            if len(first_key) > 1:
+                type = "sentence"
 
-        if isinstance(first_key, tuple):
-            type = "word_and_sentence"
+            if isinstance(first_key, tuple):
+                type = "word_and_sentence"
 
-        # turn ids into tuple
-        #if 
+            return type
+
+        # table is essentially getting overall table schema
+        def table_adapter(self, table):
+            
 
     def insert(self):
 
@@ -112,7 +124,10 @@ class InsertFunction: # NOTE: kwargs might break callouts
         schema_header = list(Tables.SCHEMAS.keys())
         
         # NOTE: BUILDING THIS.
-        
+        modifier_type = self.adapter(input)
+
+        for table_name in schema_header:
+            pass
         for table_name in schema_header: # NOTE check on this too
             print(f"table info: {Tables.get_col_info(table_name)}")  # NOTE DELETE THIS
             print(f"\ntable_name: {table_name}\n")  # NOTE DELETE THIS
