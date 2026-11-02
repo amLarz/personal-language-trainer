@@ -23,7 +23,7 @@ class Tables:
         "frequency_score": "frequency_score",
         "specificity_score": "specificity_score",
     }
-    
+
     SCHEMAS = {
         "words": {
             "id": "INTEGER PRIMARY KEY",
@@ -48,35 +48,45 @@ class Tables:
             "FOREIGN KEY (word_id)": "REFERENCES words(id)",
             "FOREIGN KEY (sentence_id)": "REFERENCES sentences(id)",
             "PRIMARY KEY": "(word_id, sentence_id)",
-        }
+        },
     }
-    
+
     @classmethod
     def create_tables(cls):
         # creating each table with design specificiations
         for table_name, table in cls.SCHEMAS.items():
             col_headers = ", \n\t".join(f"{col} {config}" for col, config in table.items())
             query = f"CREATE TABLE IF NOT EXISTS {table_name} (\n\t{col_headers} \n)"
-            print(f"query: {query}") # NOTE DELETE THIS
+            print(f"query: {query}")  # NOTE DELETE THIS
             cur.execute(query)
         con.commit()
-        
-    @classmethod 
+
+    @classmethod
     def get_col_info(cls, table_name):
         if table_name not in cls.SCHEMAS:
             return []
 
-        return [col for col in cls.SCHEMAS[table_name].keys() if col not in ["PRIMARY KEY", "FOREIGN KEY"]]
+        return [
+            col
+            for col in cls.SCHEMAS[table_name].keys()
+            if col not in ["PRIMARY KEY", "FOREIGN KEY"]
+        ]
+
 
 # INSERT FUNCTIONS
 
-class InsertFunction: # NOTE: kwargs might break callouts
+
+class InsertFunction:  # NOTE: kwargs might break callouts
     def __init__(self, **kwargs):
         self.word = kwargs.get("word")
         self.lemma = kwargs.get("lemma")
         self.sentence = kwargs.get("sentence")
         self.token_count = kwargs.get("token_count")
-        self.word_and_sentence_id = (kwargs.get("word_id"), kwargs.get("sentence_id")) if (kwargs.get("word_id") is not None) and (kwargs.get("sentence_id") is not None) else None
+        self.word_and_sentence_id = (
+            (kwargs.get("word_id"), kwargs.get("sentence_id"))
+            if (kwargs.get("word_id") is not None) and (kwargs.get("sentence_id") is not None)
+            else None
+        )
         self.hanzi = kwargs.get("hanzi")
         self.pinyin = kwargs.get("pinyin")
 
@@ -93,7 +103,7 @@ class InsertFunction: # NOTE: kwargs might break callouts
             type = "word_and_sentence"
 
         # turn ids into tuple
-        #if 
+        # if
 
     def insert(self):
 
@@ -104,16 +114,16 @@ class InsertFunction: # NOTE: kwargs might break callouts
         print(f"input: {input}")  # NOTE DELETE THIS
 
         if not input:
-            return 101 # no input founds
+            return 101  # no input founds
 
         target_table = None
         input_header = set(input.keys())
         possible_inputs = {"word", "sentence", "word_id", "sentence_id"}
         schema_header = list(Tables.SCHEMAS.keys())
-        
+
         # NOTE: BUILDING THIS.
-        
-        for table_name in schema_header: # NOTE check on this too
+
+        for table_name in schema_header:  # NOTE check on this too
             print(f"table info: {Tables.get_col_info(table_name)}")  # NOTE DELETE THIS
             print(f"\ntable_name: {table_name}\n")  # NOTE DELETE THIS
             print(f"INPUTS {input}\n")  # NOTE DELETE THIS
@@ -123,18 +133,17 @@ class InsertFunction: # NOTE: kwargs might break callouts
             if "word" in input_header:
                 target_table = table_name
                 break
-            
+
             if "sentence" in input_header:
                 target_table = table_name
                 break
-                
+
             elif "word_id" in input_header and "sentence_id" in input_header:
                 target_table = table_name
                 break
-                
 
         print(f"\ntarget_tableeee: {target_table}\n")  # NOTE DELETE THIS
-        
+
         if not target_table:
             return 100  # NOTE 100 is error code for no table found
 
@@ -146,12 +155,12 @@ class InsertFunction: # NOTE: kwargs might break callouts
         cols = ", ".join(db_payload.keys())
         placeholders = ", ".join("?" for _ in db_payload)
         query = f"INSERT INTO {target_table} ({cols}) VALUES ({placeholders})"
-        
+
         print(f"query: {query}")  # NOTE DELETE THIS
         print(f"db_payload {db_payload}")  # NOTE DELETE THIS
         cur.execute(f" {query}", db_payload.values())
         con.commit()
-        
+
         return "Inserted into {target_table} with payload: {db_payload}"
 
     def insert_word(self):
@@ -258,7 +267,9 @@ def save_and_fetch(record):
         sentence=record["sentence"], token_count=record["token_count"]
     ).insert()
     sentence_insert = dict(
-        cur.execute("SELECT id, sentence FROM sentences WHERE id = ?", (sentence_id,)).fetchone() # NOTE NOTE TEMP
+        cur.execute(
+            "SELECT id, sentence FROM sentences WHERE id = ?", (sentence_id,)
+        ).fetchone()  # NOTE NOTE TEMP
     )
 
     # token label
@@ -299,5 +310,6 @@ def save_and_fetch(record):
     con.commit()
 
     return sentence_insert, word_inserts  # returns a list of dictionaries
+
 
 Tables.create_tables()  # NOTE: TEMP
