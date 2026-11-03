@@ -145,7 +145,8 @@ class InsertFunction: # NOTE: kwargs might break callouts
         # NOTE STUDY THIS
         cols = ", ".join(db_payload.keys())
         placeholders = ", ".join("?" for _ in db_payload)
-        query = f"INSERT INTO {target_table} ({cols}) VALUES ({placeholders})"
+        print(placeholders)
+        query = f"INSERT INTO {target_table} ({cols}) VALUES (?, ?)", f", ({placeholders})"
         
         print(f"query: {query}")  # NOTE DELETE THIS
         print(f"db_payload {db_payload}")  # NOTE DELETE THIS
