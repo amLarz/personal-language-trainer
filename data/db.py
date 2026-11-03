@@ -103,11 +103,6 @@ class InsertFunction: # NOTE: kwargs might break callouts
 
             return type
 
-        # table is essentially getting overall table schema
-        def table_adapter(self, table):
-            # why is the input table tho?
-            pass #working on get col
-
     def insert(self):
 
         input = {
@@ -154,7 +149,7 @@ class InsertFunction: # NOTE: kwargs might break callouts
         
         print(f"query: {query}")  # NOTE DELETE THIS
         print(f"db_payload {db_payload}")  # NOTE DELETE THIS
-        cur.execute(f" {query}", db_payload.values())
+        cur.execute(f"{query}", db_payload.values())
         con.commit()
         
         return "Inserted into {target_table} with payload: {db_payload}"
@@ -189,7 +184,7 @@ class InsertFunction: # NOTE: kwargs might break callouts
 
     def insert_word_hanzi(self):
         cur.execute(
-            "UPDATE words SET hanzi = ? WHERE word = ?", (self.hanzi, self.word)
+            "UPDATE words SET hanzi = ? WHERE word = ?", (self.hanzi, self.word)    
         )  # TODO: fishy
 
         con.commit()
