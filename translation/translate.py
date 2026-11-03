@@ -18,9 +18,7 @@ def translate_record(sentence, words):
     )
 
     print(get_sentence_pinyin)  # DELETE THIS
-    InsertFunction(
-        sentence=sentence["sentence"], pinyin=get_sentence_pinyin
-    ).insert()
+    InsertFunction(sentence=sentence["sentence"], pinyin=get_sentence_pinyin).insert()
 
     for word in words:
         hanzi_translation = translate(word["word"])
