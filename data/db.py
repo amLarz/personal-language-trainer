@@ -99,13 +99,14 @@ class InsertFunction: # NOTE: kwargs might break callouts
                 type = "sentence"
 
             if isinstance(first_key, tuple):
-                type = "word_and_sentence"
+                type = ("word_id", "sentence_id")
 
             return type
 
         # table is essentially getting overall table schema
         def table_adapter(self, table):
-            
+            # why is the input table tho?
+            pass #working on get col
 
     def insert(self):
 
@@ -124,10 +125,8 @@ class InsertFunction: # NOTE: kwargs might break callouts
         schema_header = list(Tables.SCHEMAS.keys())
         
         # NOTE: BUILDING THIS.
-        modifier_type = self.adapter(input)
+        input_type = self.Adapter().input_adapter(input)
 
-        for table_name in schema_header:
-            pass
         for table_name in schema_header: # NOTE check on this too
             print(f"table info: {Tables.get_col_info(table_name)}")  # NOTE DELETE THIS
             print(f"\ntable_name: {table_name}\n")  # NOTE DELETE THIS
@@ -135,18 +134,9 @@ class InsertFunction: # NOTE: kwargs might break callouts
             print(f"input header: {input_header}\n")  # NOTE DELETE THIS
             print(f"tables shcema: {schema_header}\n")  # NOTE DELETE THIS
 
-            if "word" in input_header:
+            if input_type in Tables.SCHEMAS[table_name]:
                 target_table = table_name
                 break
-            
-            if "sentence" in input_header:
-                target_table = table_name
-                break
-                
-            elif "word_id" in input_header and "sentence_id" in input_header:
-                target_table = table_name
-                break
-                
 
         print(f"\ntarget_tableeee: {target_table}\n")  # NOTE DELETE THIS
         
