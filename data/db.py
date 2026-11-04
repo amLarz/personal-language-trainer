@@ -141,16 +141,16 @@ class InsertFunction: # NOTE: kwargs might break callouts
         table_col = Tables.get_col_info(target_table)
         print(f"table_col: {table_col}")  # NOTE DELETE THIS
         db_payload = {k: v for k, v in input.items() if k in table_col}
-
+        
         # NOTE STUDY THIS
         cols = ", ".join(db_payload.keys())
+        db_payload_values = tuple(db_payload.values())
         placeholders = ", ".join("?" for _ in db_payload)
         print(placeholders)
-        query = f"INSERT INTO {target_table} ({cols}) VALUES (?, ?)", f", ({placeholders})"
+        query = f"INSERT INTO {target_table} ({cols}) VALUES ({placeholders})"
         
-        print(f"query: {query}")  # NOTE DELETE THIS
         print(f"db_payload {db_payload}")  # NOTE DELETE THIS
-        cur.execute(f"{query}", db_payload.values())
+        cur.execute(query, db_payload_values)
         con.commit()
         
         return "Inserted into {target_table} with payload: {db_payload}"
