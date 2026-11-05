@@ -90,15 +90,16 @@ class InsertFunction: # NOTE: kwargs might break callouts
         
         def input_adapter(self, input):
             first_key = next(iter(input))
-
+            first_key_value = input[first_key].split() if isinstance(input[first_key], str) else input[first_key]
+            
             # type helps choose target for insertion
-            if len(first_key) == 1:
+            if len(first_key_value) == 1:
                 type = "word"
 
-            if len(first_key) > 1:
+            if len(first_key_value) > 1:
                 type = "sentence"
 
-            if isinstance(first_key, tuple):
+            if isinstance(first_key_value, tuple):
                 type = ("word_id", "sentence_id")
 
             return type
@@ -116,7 +117,6 @@ class InsertFunction: # NOTE: kwargs might break callouts
 
         target_table = None
         input_header = set(input.keys())
-        possible_inputs = {"word", "sentence", "word_id", "sentence_id"}
         schema_header = list(Tables.SCHEMAS.keys())
         
         # NOTE: BUILDING THIS.
@@ -152,6 +152,10 @@ class InsertFunction: # NOTE: kwargs might break callouts
         print(f"db_payload {db_payload}")  # NOTE DELETE THIS
         cur.execute(query, db_payload_values)
         con.commit()
+        last_row_id = cur.lastrowid
+        
+        if target_table == "sentences":
+            return last_row_id  # return the sentence id for further processing
         
         return "Inserted into {target_table} with payload: {db_payload}"
 
@@ -272,7 +276,7 @@ def save_and_fetch(record):
         word_id = InsertFunction(word=token["text"], lemma=token["lemma"]).insert_word()
 
         # link the word and sentence
-        InsertFunction(word_id=word_id, sentence_id=sentence_id).insert_word_sentence_link()
+        InsertFunction(word_id=word_id, sentence_id=sentence_id).insert()
         # select the current token's word and id
         current_token = dict(
             cur.execute("SELECT * FROM words WHERE id = ?", (word_id,)).fetchone()
