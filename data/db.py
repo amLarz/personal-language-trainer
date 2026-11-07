@@ -23,7 +23,7 @@ class Tables:
         "frequency_score": "frequency_score",
         "specificity_score": "specificity_score",
     }
-    
+
     SCHEMAS = {
         "words": {
             "id": "INTEGER PRIMARY KEY",
@@ -48,20 +48,20 @@ class Tables:
             "FOREIGN KEY (word_id)": "REFERENCES words(id)",
             "FOREIGN KEY (sentence_id)": "REFERENCES sentences(id)",
             "PRIMARY KEY": "(word_id, sentence_id)",
-        }
+        },
     }
-    
+
     @classmethod
     def create_tables(cls):
         # creating each table with design specificiations
         for table_name, table in cls.SCHEMAS.items():
             col_headers = ", \n\t".join(f"{col} {config}" for col, config in table.items())
             query = f"CREATE TABLE IF NOT EXISTS {table_name} (\n\t{col_headers} \n)"
-            print(f"query: {query}") # NOTE DELETE THIS
+            print(f"query: {query}")  # NOTE DELETE THIS
             cur.execute(query)
         con.commit()
-        
-    @classmethod 
+
+    @classmethod
     def get_col_info(cls, table_name):
         if table_name not in cls.SCHEMAS:
             return []
@@ -69,17 +69,27 @@ class Tables:
         if table_name == None:
             return [col for col in cls.SCHEMAS.keys() if col not in ["PRIMARY KEY", "FOREIGN KEY"]]
 
-        return [col for col in cls.SCHEMAS[table_name].keys() if col not in ["PRIMARY KEY", "FOREIGN KEY"]]
+        return [
+            col
+            for col in cls.SCHEMAS[table_name].keys()
+            if col not in ["PRIMARY KEY", "FOREIGN KEY"]
+        ]
+
 
 # INSERT FUNCTIONS
 
-class InsertFunction: # NOTE: kwargs might break callouts
+
+class InsertFunction:  # NOTE: kwargs might break callouts
     def __init__(self, **kwargs):
         self.word = kwargs.get("word")
         self.lemma = kwargs.get("lemma")
         self.sentence = kwargs.get("sentence")
         self.token_count = kwargs.get("token_count")
-        self.word_and_sentence_id = (kwargs.get("word_id"), kwargs.get("sentence_id")) if (kwargs.get("word_id") is not None) and (kwargs.get("sentence_id") is not None) else None
+        self.word_and_sentence_id = (
+            (kwargs.get("word_id"), kwargs.get("sentence_id"))
+            if (kwargs.get("word_id") is not None) and (kwargs.get("sentence_id") is not None)
+            else None
+        )
         self.hanzi = kwargs.get("hanzi")
         self.pinyin = kwargs.get("pinyin")
 
@@ -87,11 +97,13 @@ class InsertFunction: # NOTE: kwargs might break callouts
         def __init__(self, **kwargs):
             self.input = kwargs.get("input")
             self.table = kwargs.get("table")
-        
+
         def input_adapter(self, input):
             first_key = next(iter(input))
-            first_key_value = input[first_key].split() if isinstance(input[first_key], str) else input[first_key]
-            
+            first_key_value = (
+                input[first_key].split() if isinstance(input[first_key], str) else input[first_key]
+            )
+
             # type helps choose target for insertion
             if len(first_key_value) == 1:
                 type = "word"
@@ -113,16 +125,16 @@ class InsertFunction: # NOTE: kwargs might break callouts
         print(f"input: {input}")  # NOTE DELETE THIS
 
         if not input:
-            return 101 # no input founds
+            return 101  # no input founds
 
         target_table = None
         input_header = set(input.keys())
         schema_header = list(Tables.SCHEMAS.keys())
-        
+
         # NOTE: BUILDING THIS.
         input_type = self.Adapter().input_adapter(input)
 
-        for table_name in schema_header: # NOTE check on this too
+        for table_name in schema_header:  # NOTE check on this too
             print(f"table info: {Tables.get_col_info(table_name)}")  # NOTE DELETE THIS
             print(f"\ntable_name: {table_name}\n")  # NOTE DELETE THIS
             print(f"INPUTS {input}\n")  # NOTE DELETE THIS
@@ -134,29 +146,29 @@ class InsertFunction: # NOTE: kwargs might break callouts
                 break
 
         print(f"\ntarget_tableeee: {target_table}\n")  # NOTE DELETE THIS
-        
+
         if not target_table:
             return 100  # NOTE 100 is error code for no table found
 
         table_col = Tables.get_col_info(target_table)
         print(f"table_col: {table_col}")  # NOTE DELETE THIS
         db_payload = {k: v for k, v in input.items() if k in table_col}
-        
+
         # NOTE STUDY THIS
         cols = ", ".join(db_payload.keys())
         db_payload_values = tuple(db_payload.values())
         placeholders = ", ".join("?" for _ in db_payload)
         print(placeholders)
         query = f"INSERT INTO {target_table} ({cols}) VALUES ({placeholders})"
-        
+
         print(f"db_payload {db_payload}")  # NOTE DELETE THIS
         cur.execute(query, db_payload_values)
         con.commit()
         last_row_id = cur.lastrowid
-        
+
         if target_table == "sentences":
             return last_row_id  # return the sentence id for further processing
-        
+
         return "Inserted into {target_table} with payload: {db_payload}"
 
     def insert_word(self):
@@ -189,7 +201,7 @@ class InsertFunction: # NOTE: kwargs might break callouts
 
     def insert_word_hanzi(self):
         cur.execute(
-            "UPDATE words SET hanzi = ? WHERE word = ?", (self.hanzi, self.word)    
+            "UPDATE words SET hanzi = ? WHERE word = ?", (self.hanzi, self.word)
         )  # TODO: fishy
 
         con.commit()
@@ -263,7 +275,9 @@ def save_and_fetch(record):
         sentence=record["sentence"], token_count=record["token_count"]
     ).insert()
     sentence_insert = dict(
-        cur.execute("SELECT id, sentence FROM sentences WHERE id = ?", (sentence_id,)).fetchone() # NOTE NOTE TEMP
+        cur.execute(
+            "SELECT id, sentence FROM sentences WHERE id = ?", (sentence_id,)
+        ).fetchone()  # NOTE NOTE TEMP
     )
 
     # token label
@@ -304,5 +318,6 @@ def save_and_fetch(record):
     con.commit()
 
     return sentence_insert, word_inserts  # returns a list of dictionaries
+
 
 Tables.create_tables()  # NOTE: TEMP
