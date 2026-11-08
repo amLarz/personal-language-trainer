@@ -116,6 +116,7 @@ class InsertFunction:  # NOTE: kwargs might break callouts
 
             return type
 
+    # fix: insert function for different languages
     def insert(self):
 
         input = {
