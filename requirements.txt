@@ -1,7 +1,7 @@
-sounddevice
+google-cloud-translate
 openai-whisper
+pypinyin
+python-dotenv
+sounddevice
 spacy
 wordfreq
-google-cloud-translate
-python-dotenv
-pypinyin
