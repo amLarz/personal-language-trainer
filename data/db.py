@@ -161,7 +161,7 @@ class InsertFunction:  # NOTE: kwargs might break callouts
         placeholders = ", ".join("?" for _ in db_payload)
         print(placeholders)
         query = f"INSERT INTO {target_table} ({cols}) VALUES ({placeholders})"
-        
+
         print(f"db_payload {db_payload}")  # NOTE DELETE THIS
         cur.execute(query, db_payload_values)
         con.commit()
@@ -171,7 +171,7 @@ class InsertFunction:  # NOTE: kwargs might break callouts
             return last_row_id  # return the sentence id for further processing
 
         return last_row_id
-    
+
     def insert_word(self):
         cur.execute(
             "INSERT INTO words (word, lemma, total_count) VALUES (?, ?, 1) ON CONFLICT(word) DO UPDATE SET total_count = total_count + 1 RETURNING id",
