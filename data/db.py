@@ -80,18 +80,24 @@ class Tables:
 
 
 class InsertFunction:  # NOTE: kwargs might break callouts
-    def __init__(self, **kwargs):
-        self.word = kwargs.get("word")
-        self.lemma = kwargs.get("lemma")
-        self.sentence = kwargs.get("sentence")
-        self.token_count = kwargs.get("token_count")
-        self.word_and_sentence_id = (
-            (kwargs.get("word_id"), kwargs.get("sentence_id"))
-            if (kwargs.get("word_id") is not None) and (kwargs.get("sentence_id") is not None)
-            else None
-        )
-        self.hanzi = kwargs.get("hanzi")
-        self.pinyin = kwargs.get("pinyin")
+    def __init__(self,
+                 word=None,
+                 lemma=None,
+                 sentence=None,
+                 token_count=None,
+                 word_id=None,
+                 sentence_id=None,
+                 hanzi=None,
+                 pinyin=None):
+        
+        self.word = word
+        self.lemma = lemma
+        self.sentence = sentence
+        self.token_count = token_count
+        self.word_id = word_id
+        self.sentence_id = sentence_id
+        self.hanzi = hanzi
+        self.pinyin = pinyin
 
     class Adapter:
         def __init__(self, **kwargs):
