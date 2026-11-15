@@ -97,7 +97,7 @@ class InsertFunction:  # NOTE: kwargs might break callouts
         def __init__(self, **kwargs):
             self.input = kwargs.get("input")
             self.table = kwargs.get("table")
-
+            
         def input_adapter(self, input):
             first_key = next(iter(input))
             first_key_value = (
@@ -131,6 +131,7 @@ class InsertFunction:  # NOTE: kwargs might break callouts
         target_table = None
         input_header = set(input.keys())
         schema_header = list(Tables.SCHEMAS.keys())
+        is_chinese = True if ['hanzi', 'pinyin'] in input_header else False # hardcoded 'hanzi' and 'pinyin' for now, but will need to be more dynamic in the future
 
         # NOTE: BUILDING THIS.
         input_type = self.Adapter().input_adapter(input)
