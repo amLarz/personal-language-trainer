@@ -1,0 +1,30 @@
+from abc import ABC, abstractmethod
+
+class Insert(ABC):
+    @abstractmethod
+    def insert(self):
+        pass
+    
+class InsertWord(Insert):
+    def insert(self):
+        pass
+    
+class InsertSentence(Insert):
+    def insert(self):
+        pass
+        
+class InsertWordSentenceLink(Insert):
+    def insert(self):
+        pass
+    
+class InsertWordHanzi(Insert):
+    def insert(self):
+        pass
+    
+class InsertSentenceHanzi(Insert):
+    def insert(self):
+        pass
+    
+class InsertWordPinyin(Insert):
+    def insert(self):
+        pass
