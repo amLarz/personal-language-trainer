@@ -1,30 +1,36 @@
 from abc import ABC, abstractmethod
 
+class Append(ABC):
+    @abstractmethod
+    def insert(self) -> int | None:        
+        pass
+
 class Insert(ABC):
     @abstractmethod
+    def insert(self) -> int | None:
+        pass
+    
+class AppendWord(Append):
     def insert(self):
         pass
     
-class InsertWord(Insert):
-    def insert(self):
-        pass
-    
-class InsertSentence(Insert):
+class AppendSentence(Append):
     def insert(self):
         pass
         
-class InsertWordSentenceLink(Insert):
+class AppendWordSentenceLink(Append):
     def insert(self):
         pass
     
-class InsertWordHanzi(Insert):
+class InsertHanzi(Insert):
     def insert(self):
         pass
     
-class InsertSentenceHanzi(Insert):
+class InsertPinyin(Insert):
     def insert(self):
         pass
     
-class InsertWordPinyin(Insert):
-    def insert(self):
-        pass
+class AppendContext:
+    def __init__(self, strategy: Append):
+        self.strategy = strategy
+    
