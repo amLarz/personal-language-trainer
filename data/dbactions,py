@@ -1,36 +1,45 @@
 from abc import ABC, abstractmethod
+from data.paths import DATABASE_DIR
+import sqlite3
 
-class Append(ABC):
+con = sqlite3.connect(DATABASE_DIR / "mandarin.db")
+
+class AppendToDB(ABC):
     @abstractmethod
-    def insert(self) -> int | None:        
+    def append(self) -> int | None:        
         pass
 
-class Insert(ABC):
+class InsertToDB(ABC):
     @abstractmethod
     def insert(self) -> int | None:
         pass
     
-class AppendWord(Append):
-    def insert(self):
-        pass
+class AppendWord(AppendToDB):
+    def append(self):
+        cur.execute("INSERT INTO words (word) VALUES (?)", (self.word,))
     
-class AppendSentence(Append):
-    def insert(self):
-        pass
+class AppendSentence(AppendToDB):
+    def append(self):
+        cur.execute("INSERT INTO sentences (sentence) VALUES (?)", (self.sentence,))
         
-class AppendWordSentenceLink(Append):
+class AppendWordSentenceLink(AppendToDB):
     def insert(self):
         pass
     
-class InsertHanzi(Insert):
+class InsertHanzi(InsertToDB):
     def insert(self):
         pass
     
-class InsertPinyin(Insert):
+class InsertPinyin(InsertToDB):
     def insert(self):
         pass
     
 class AppendContext:
-    def __init__(self, strategy: Append):
+    def __init__(self, strategy: AppendToDB):
         self.strategy = strategy
     
+    def set_strategy(self, strategy: AppendToDB):
+        self.strategy = strategy
+        
+    def append(self, input_data):
+        return self.strategy.append(input_data)
