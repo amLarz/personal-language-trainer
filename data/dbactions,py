@@ -3,36 +3,25 @@ from data.paths import DATABASE_DIR
 import sqlite3
 
 con = sqlite3.connect(DATABASE_DIR / "mandarin.db")
+cur = con.cursor()
 
 class AppendToDB(ABC):
     @abstractmethod
-    def append(self) -> int | None:        
+    def DBappend(self, input_data) -> int | None:        
         pass
 
-class InsertToDB(ABC):
-    @abstractmethod
-    def insert(self) -> int | None:
-        pass
-    
 class AppendWord(AppendToDB):
-    def append(self):
-        cur.execute("INSERT INTO words (word) VALUES (?)", (self.word,))
-    
+    def DBappend(self, input_data):
+        word = input_data['word']
+        cur.execute("INSERT INTO words (word) VALUES (?)", (word,))
+
 class AppendSentence(AppendToDB):
-    def append(self):
-        cur.execute("INSERT INTO sentences (sentence) VALUES (?)", (self.sentence,))
-        
-class AppendWordSentenceLink(AppendToDB):
-    def insert(self):
-        pass
-    
-class InsertHanzi(InsertToDB):
-    def insert(self):
-        pass
-    
-class InsertPinyin(InsertToDB):
-    def insert(self):
-        pass
+    def DBappend(self, input_data):
+
+        if 'sentence' not in input_data:
+            raise ValueError("Input data must contain a 'sentence' key.")
+        sentence = input_data['sentence']
+        cur.execute("INSERT INTO sentences (sentence) VALUES (?)", (sentence,))
     
 class AppendContext:
     def __init__(self, strategy: AppendToDB):
@@ -42,4 +31,8 @@ class AppendContext:
         self.strategy = strategy
         
     def append(self, input_data):
-        return self.strategy.append(input_data)
+        return self.strategy.DBappend(input_data)
+
+# 1. clean the input data (sentence: str)
+# 2. take in the input data (word: str, sentence: str)
+# 3. allocate the input data (strategy - word, input_date - str)
