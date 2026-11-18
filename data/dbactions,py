@@ -15,6 +15,8 @@ class AppendWord(AppendToDB):
         word = input_data['word']
         cur.execute("INSERT INTO words (word) VALUES (?)", (word,))
 
+        return cur.lastrowid  # Return the ID of the newly inserted word
+
 class AppendSentence(AppendToDB):
     def DBappend(self, input_data):
 
@@ -22,6 +24,8 @@ class AppendSentence(AppendToDB):
             raise ValueError("Input data must contain a 'sentence' key.")
         sentence = input_data['sentence']
         cur.execute("INSERT INTO sentences (sentence) VALUES (?)", (sentence,))
+
+        return cur.lastrowid  # Return the ID of the newly inserted sentence
     
 class AppendContext:
     def __init__(self, strategy: AppendToDB):
