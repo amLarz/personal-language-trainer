@@ -77,6 +77,10 @@ class Tables:
 
 
 # INSERT FUNCTIONS
+# this block will do the following:
+# 1. the function calling out will be used as inputs
+# 2. based from the inputs, the function will label a type and determine which table to insert into
+# 3. using the strategy pattern, the type will be used to determine which strategy to use for insertion
 
 
 class InsertFunction:  # NOTE: kwargs might break callouts
@@ -114,13 +118,13 @@ class InsertFunction:  # NOTE: kwargs might break callouts
 
             # type helps choose target for insertion
             if len(first_key_value) == 1:
-                type = "word"
+                context = "word"
 
             if len(first_key_value) > 1:
-                type = "sentence"
+                context = "sentence"
 
             if isinstance(first_key_value, tuple):
-                type = ("word_id", "sentence_id")
+                context = ("word_id", "sentence_id")
 
             return type
 
